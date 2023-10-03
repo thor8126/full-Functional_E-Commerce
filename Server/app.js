@@ -1,6 +1,7 @@
 import express, { urlencoded } from "express";
 import { config } from "dotenv";
 import morgan from "morgan";
+import authRoutes from "./routes/authRoute.js"
 
 // configure .env file
 config({
@@ -13,3 +14,6 @@ export const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(morgan("dev"));
+
+// routes
+app.use('/api/v1/auth', authRoutes);
