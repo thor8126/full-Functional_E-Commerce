@@ -92,13 +92,12 @@ export const loginControler = async (req, res) => {
       expiresIn: "7d",
     });
     const { name, phone, address, ...rest } = user;
-    res
-      .status(200)
-      .send({
-        success: true,
-        message: "login successfully",
-        user: { name, phone, address, email },
-      });
+    res.status(200).send({
+      success: true,
+      message: "login successfully",
+      user: { name, phone, address, email },
+      token,
+    });
   } catch (error) {
     return res.status(500).send({
       success: false,
@@ -106,4 +105,9 @@ export const loginControler = async (req, res) => {
       error: error.message,
     });
   }
+};
+
+// test routes
+export const testController = (req, res) => {
+  res.status(200).send({ yes: "Success fully working" });
 };
