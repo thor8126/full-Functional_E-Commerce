@@ -1,0 +1,13 @@
+.contactus {
+    margin: 0;
+    padding: 0;
+    height: 75vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .contact-card{
+    font-size: 1.1rem;
+  }
+  
