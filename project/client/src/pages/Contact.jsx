@@ -4,10 +4,14 @@ import { BiSupport, BiMailSend, BiPhoneCall } from "react-icons/bi";
 import "./Pages_Css/Contact.css";
 function Contact() {
   return (
-    <Layout>
+    <Layout title={"Contact us"}>
       <div className="row contactus">
         <div className="col-md-6">
-          <img src="./images/contactus.jpg" alt="ContactUs" style={{ width: "100%" }} />
+          <img
+            src="./images/contactus.jpg"
+            alt="ContactUs"
+            style={{ width: "100%" }}
+          />
         </div>
         <div className="col-md-4 contact-card">
           <h1 className="bg-dark p-2 text-white text-center">CONTACT US</h1>

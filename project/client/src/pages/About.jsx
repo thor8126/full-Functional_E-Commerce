@@ -3,7 +3,7 @@ import Layout from "../components/layout/Layout";
 import "./Pages_Css/Contact.css";
 function About() {
   return (
-    <Layout>
+    <Layout title={"About us - Ecommer app"}>
       <div className="row contactus ">
         <div className="col-md-6 ">
           <img
