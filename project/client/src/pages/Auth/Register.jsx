@@ -1,77 +1,110 @@
 import React, { useState } from "react";
 import Layout from "../../components/layout/Layout";
-import "../Pages_Css/register.css";
-import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import toast from "react-hot-toast";
+import "./AuthStyles/authstyle.css";
 function Register() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [address, setAddress] = useState("");
   const [phone, setPhone] = useState("");
+  const [answer, setAnswer] = useState("");
+  const navigate = useNavigate();
 
   // form function
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    toast.success("Wow so easy!");
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_APP_API}/api/v1/auth/register`,
+        { name, email, password, phone, address }
+      );
+      if(res?.data?.success) {
+        toast.success(res.data.message);
+        navigate("/login");
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (error) {
+      toast.error("Something went Wrong");
+    }
   };
   return (
     <Layout title={"Register-Page"}>
-      <div className="register">
-        <h1>Register Page</h1>
+      <div className="form-container" style={{ minHeight: "90vh" }}>
         <form onSubmit={handleSubmit}>
+          <h4 className="title">REGISTER FORM</h4>
           <div className="mb-3">
             <input
+              type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              type="text"
               className="form-control"
-              placeholder="Enter Your Full Name"
+              id="exampleInputEmail1"
+              placeholder="Enter Your Name"
               required
+              autoFocus
             />
           </div>
           <div className="mb-3">
             <input
+              type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              type="email"
               className="form-control"
-              placeholder="Enter Your E-Mail"
+              id="exampleInputEmail1"
+              placeholder="Enter Your Email "
               required
             />
           </div>
           <div className="mb-3">
             <input
+              type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              type="password"
               className="form-control"
+              id="exampleInputPassword1"
               placeholder="Enter Your Password"
               required
             />
           </div>
           <div className="mb-3">
             <input
+              type="text"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              type="text"
               className="form-control"
+              id="exampleInputEmail1"
               placeholder="Enter Your Phone"
               required
             />
           </div>
           <div className="mb-3">
             <input
+              type="text"
               value={address}
               onChange={(e) => setAddress(e.target.value)}
-              type="text"
               className="form-control"
+              id="exampleInputEmail1"
               placeholder="Enter Your Address"
               required
             />
           </div>
-
+          <div className="mb-3">
+            <input
+              type="text"
+              value={answer}
+              onChange={(e) => setAnswer(e.target.value)}
+              className="form-control"
+              id="exampleInputEmail1"
+              placeholder="What is Your Favorite sports"
+              required
+            />
+          </div>
           <button type="submit" className="btn btn-primary">
-            Submit
+            REGISTER
           </button>
         </form>
       </div>

@@ -1,28 +1,28 @@
 import { comparePassword, hashPassword } from "../helpers/authHelper.js";
 import userModel from "../models/userModel.js";
 import JWt from "jsonwebtoken";
+
 export const registerControler = async (req, res) => {
   try {
+  
     const { name, email, password, phone, address } = req.body;
     // validation
     // check if any required field is missing
     for (let key of [name, email, password, phone, address]) {
       if (!key) {
         // throw an error with a custom message
-        return res.send({ error: `${key} is required` });
+        return res.send({ message: `${key} is required` });
       }
     }
-
     // here we will check if same user is present in data base
     const existingUser = await userModel.findOne({ email });
     // if user is presend we will send a msg that user already exist
     if (existingUser) {
       return res.status(200).send({
-        success: true,
+        success: false,
         message: "Already Reagisterd Please Login",
       });
     }
-
     // here we will user registerd
     // here we are sending password to convert in hashPassword
     const hashedPassword = await hashPassword(password);

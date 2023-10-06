@@ -2,7 +2,7 @@ import express, { urlencoded } from "express";
 import { config } from "dotenv";
 import morgan from "morgan";
 import authRoutes from "./routes/authRoute.js";
-
+import cors from "cors"
 // configure .env file
 config({
   path: "./.env",
@@ -11,6 +11,7 @@ config({
 export const app = express();
 
 // middlewares
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
