@@ -6,22 +6,29 @@ import Policy from "./pages/Policy";
 import PageNotFound from "./pages/PageNotFound";
 import Register from "./pages/Auth/Register";
 import Login from "./pages/Auth/Login";
+import DashBoard from "./pages/user/DashBoard";
+import PrivateRoute from "./components/routes/PrivateRoute";
+import ForgotPassword from "./pages/Auth/ForgotPassword";
 // import { AuthProvider } from "./context/auth.jsx";
 function App() {
   return (
     <>
       {/* <AuthProvider> */}
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/policy" element={<Policy />} />
-            <Route path="/*" element={<PageNotFound />} />
-          </Routes>
-        </BrowserRouter>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/dashboard" element={<PrivateRoute />}>
+            <Route path="" element={<DashBoard />} />
+          </Route>
+          <Route path="/register" element={<Register />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/policy" element={<Policy />} />
+          <Route path="/*" element={<PageNotFound />} />
+        </Routes>
+      </BrowserRouter>
       {/* </AuthProvider> */}
     </>
   );

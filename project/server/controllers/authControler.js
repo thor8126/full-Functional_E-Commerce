@@ -4,16 +4,16 @@ import JWt from "jsonwebtoken";
 
 export const registerControler = async (req, res) => {
   try {
-  
-    const { name, email, password, phone, address } = req.body;
+    const { name, email, password, answer, phone, address } = req.body;
     // validation
     // check if any required field is missing
-    for (let key of [name, email, password, phone, address]) {
+    let keys = ["name", "email", "password", "phone", "address", "answer"];
+    [name, email, password, phone, address, answer].forEach((key, i) => {
       if (!key) {
-        // throw an error with a custom message
-        return res.send({ message: `${key} is required` });
+        return res.status(400).send({ message: `${keys[i]} is required` });
       }
-    }
+    });
+
     // here we will check if same user is present in data base
     const existingUser = await userModel.findOne({ email });
     // if user is presend we will send a msg that user already exist
@@ -33,6 +33,7 @@ export const registerControler = async (req, res) => {
       phone,
       address,
       password: hashedPassword,
+      answer,
     });
     // try to save the user
     const saved = await newUser.save();
@@ -110,4 +111,41 @@ export const loginControler = async (req, res) => {
 // test routes
 export const testController = (req, res) => {
   res.status(200).send({ yes: "Success fully working" });
+};
+
+// forgotPasswordControler
+export const forgotPasswordControler = async (req, res) => {
+  try {
+    const { email, answer, newPassword } = req.body;
+    // here i am checking if any field is required
+    let keys = ["email", "answer", "newPassword"];
+    [email, answer, newPassword].forEach((key, i) => {
+      if (!key) {
+        return res.status(400).send({ message: `${keys[i]} is required` });
+      }
+    });
+    // check email
+    const user = await userModel.findOne({ email, answer });
+    // validation
+    if (!user) {
+      return res.status(404).send({
+        success: false,
+        message: "Wrong Email Or Answer",
+      });
+    }
+    // here we are converting password into hashPassword
+    const updatePassword = await hashPassword(newPassword);
+    await userModel.findByIdAndUpdate(user._id, { password: updatePassword });
+    return res.status(200).send({
+      success: true,
+      message: "Password Updated Successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Something went wrong",
+      error,
+    });
+  }
 };

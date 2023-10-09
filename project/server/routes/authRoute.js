@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  forgotPasswordControler,
   loginControler,
   registerControler,
   testController,
@@ -17,6 +18,13 @@ router.post("/register", registerControler);
 router.post("/login", loginControler);
 
 // test routes
-router.get("/test", requireSignIn, isAdmin ,testController)
+router.get("/test", requireSignIn, isAdmin, testController);
 
+// Potected auth
+router.get("/user-auth", requireSignIn, (req, res) => {
+  res.status(200).send({ ok: true });
+});
+
+// forgot password 
+router.post('/forgot-password', forgotPasswordControler);
 export default router;

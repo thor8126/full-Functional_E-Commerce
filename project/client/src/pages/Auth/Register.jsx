@@ -19,9 +19,9 @@ function Register() {
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_APP_API}/api/v1/auth/register`,
-        { name, email, password, phone, address }
+        { name, email, password, phone, address, answer }
       );
-      if(res?.data?.success) {
+      if (res?.data?.success) {
         toast.success(res.data.message);
         navigate("/login");
       } else {
