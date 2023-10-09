@@ -9,6 +9,8 @@ import Login from "./pages/Auth/Login";
 import DashBoard from "./pages/user/DashBoard";
 import PrivateRoute from "./components/routes/PrivateRoute";
 import ForgotPassword from "./pages/Auth/ForgotPassword";
+import AdminRoute from "./components/routes/Adminroute";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
 // import { AuthProvider } from "./context/auth.jsx";
 function App() {
   return (
@@ -18,7 +20,10 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/dashboard" element={<PrivateRoute />}>
-            <Route path="" element={<DashBoard />} />
+            <Route path="user" element={<DashBoard />} />
+          </Route>
+          <Route path="/dashboard" element={<AdminRoute />}>
+            <Route path="admin" element={<AdminDashboard />} />
           </Route>
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />

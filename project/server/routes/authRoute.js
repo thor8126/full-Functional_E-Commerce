@@ -20,11 +20,15 @@ router.post("/login", loginControler);
 // test routes
 router.get("/test", requireSignIn, isAdmin, testController);
 
-// Potected auth
+// Potected user auth
 router.get("/user-auth", requireSignIn, (req, res) => {
   res.status(200).send({ ok: true });
 });
+//  Potected admin auth
+router.get("/admin-auth", requireSignIn, isAdmin, (req, res) => {
+  res.status(200).send({ ok: true });
+});
 
-// forgot password 
-router.post('/forgot-password', forgotPasswordControler);
+// forgot password
+router.post("/forgot-password", forgotPasswordControler);
 export default router;

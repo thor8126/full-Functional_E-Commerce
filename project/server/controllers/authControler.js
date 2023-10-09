@@ -92,11 +92,11 @@ export const loginControler = async (req, res) => {
     const token = JWt.sign({ _id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
-    const { name, phone, address, ...rest } = user;
+    const { name, phone, address, role, ...rest } = user;
     res.status(200).send({
       success: true,
       message: "login successfully",
-      user: { name, phone, address, email },
+      user: { name, phone, address, email, role },
       token,
     });
   } catch (error) {
