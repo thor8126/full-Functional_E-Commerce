@@ -2,7 +2,8 @@ import express, { urlencoded } from "express";
 import { config } from "dotenv";
 import morgan from "morgan";
 import authRoutes from "./routes/authRoute.js";
-import cors from "cors"
+import categoryRoutes from "./routes/categoryRoutes.js";
+import cors from "cors";
 // configure .env file
 config({
   path: "./.env",
@@ -18,3 +19,4 @@ app.use(morgan("dev"));
 
 // routes
 app.use("/api/v1/auth", authRoutes);
+app.use("/api/v1/category", categoryRoutes);
