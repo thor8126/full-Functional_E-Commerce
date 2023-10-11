@@ -10,7 +10,7 @@ export const registerControler = async (req, res) => {
     let keys = ["name", "email", "password", "phone", "address", "answer"];
     [name, email, password, phone, address, answer].forEach((key, i) => {
       if (!key) {
-        return res.status(400).send({ message: `${keys[i]} is required` });
+        return res.status(404).send({ message: `${keys[i]} is required` });
       }
     });
 
