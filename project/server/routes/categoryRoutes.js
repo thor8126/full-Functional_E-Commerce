@@ -10,7 +10,7 @@ import {
 const router = express.Router();
 
 // routers
-// reate category
+// create category
 router.post(
   "/create-category",
   requireSignIn,

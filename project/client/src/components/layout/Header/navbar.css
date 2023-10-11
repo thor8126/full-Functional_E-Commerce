@@ -17,6 +17,7 @@
 
 .active {
   border-bottom: 0.2rem solid black;
+  margin-right: 5px;
 }
 
 .navbar-brand {
@@ -24,3 +25,4 @@
   font-family: "roboto", sans-serif;
   letter-spacing: 0.1rem;
 }
+
