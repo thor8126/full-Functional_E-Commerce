@@ -26,7 +26,7 @@ function CreateCategory() {
         getAllCategory();
         setName("");
       } else {
-        toast.error(data.message);
+        toast.error(data?.message);
       }
     } catch (error) {
       console.log(error);
@@ -40,14 +40,16 @@ function CreateCategory() {
       const { data } = await axios.get(
         `${import.meta.env.VITE_APP_API}/api/v1/category/get-category`
       );
-      if (data.success) {
-        setCategories(data.category);
+      if (data?.success) {
+        setCategories(data?.category);
       }
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong in getting category");
     }
   };
+
+  
   useEffect(() => {
     getAllCategory();
   }, []);

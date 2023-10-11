@@ -1,9 +1,11 @@
 import slugify from "slugify";
 import productModel from "../models/productModel.js";
 import fs from "fs";
+import { log } from "console";
 
 export const createProductController = async (req, res) => {
   try {
+    console.log("gg");
     const { name, slug, description, price, category, quantity, shipping } =
       req.fields;
     const { photo } = req.files;
@@ -34,7 +36,7 @@ export const createProductController = async (req, res) => {
     await products.save();
     res.status(201).send({
       success: true,
-      message: "Product Created Successfully",
+      message: `${name}  Created Successfully`,
       products,
     });
   } catch (error) {
@@ -156,11 +158,12 @@ export const updateProductController = async (req, res) => {
           .send({ message: `${keys[i]} size greater then 1 mb` });
       }
     });
+
     const products = await productModel.findByIdAndUpdate(
       req.params.pid,
       {
         ...req.fields,
-        slug:slugify(name),
+        slug: slugify(name),
       },
       { new: true }
     );
