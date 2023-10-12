@@ -1,11 +1,9 @@
 import slugify from "slugify";
 import productModel from "../models/productModel.js";
 import fs from "fs";
-import { log } from "console";
 
 export const createProductController = async (req, res) => {
   try {
-    console.log("gg");
     const { name, slug, description, price, category, quantity, shipping } =
       req.fields;
     const { photo } = req.files;
@@ -17,17 +15,15 @@ export const createProductController = async (req, res) => {
       "quantity",
       "photo",
     ];
+
     [name, description, price, category, quantity, photo].forEach((key, i) => {
       if (!key) {
         return res.status(404).send({ message: `${keys[i]} is required` });
       }
-      if (key === photo && photo.size > 1000000) {
-        console.log("i am checking");
-        return res
-          .status(404)
-          .send({ message: `${keys[i]} size greater then 1 mb` });
-      }
     });
+    if (photo.size > 1000000) {
+      return res.status(404).send({ message: `photo size greater then 1 mb` });
+    }
     const products = new productModel({ ...req.fields, slug: slugify(name) });
     if (photo) {
       products.photo.data = fs.readFileSync(photo.path);
@@ -36,8 +32,7 @@ export const createProductController = async (req, res) => {
     await products.save();
     res.status(201).send({
       success: true,
-      message: `${name}  Created Successfully`,
-      products,
+      message: `${name} `,
     });
   } catch (error) {
     console.log(error);
@@ -85,7 +80,7 @@ export const getSingleProductController = async (req, res) => {
       success: true,
       message: "One Product",
       totalCount: product.length,
-      product,
+      product: product[0],
     });
   } catch (error) {
     console.log(error);
@@ -139,50 +134,59 @@ export const updateProductController = async (req, res) => {
     const { name, slug, description, price, category, quantity, shipping } =
       req.fields;
     const { photo } = req.files;
-    let keys = [
-      "name",
-      "description",
-      "price",
-      "category",
-      "quantity",
-      "photo",
-    ];
-    [name, description, price, category, quantity, photo].forEach((key, i) => {
+    let keys = ["name", "description", "price", "category", "quantity"];
+
+    [name, description, price, category, quantity].forEach((key, i) => {
       if (!key) {
-        return res.status(404).send({ message: `${keys[i]} is required` });
-      }
-      if (key === photo && photo.size > 1000000) {
-        console.log("i am checking");
-        return res
-          .status(404)
-          .send({ message: `${keys[i]} size greater then 1 mb` });
+        return res.status(400).send({ message: `${keys[i]} is required` });
       }
     });
+    let products = await productModel.findById(req.params.pid);
 
-    const products = await productModel.findByIdAndUpdate(
-      req.params.pid,
-      {
-        ...req.fields,
-        slug: slugify(name),
-      },
-      { new: true }
-    );
+    if (!products) {
+      return res.status(404).send({ message: "Product not found" });
+    }
+
+    if (photo && photo.size > 1000000) {
+      return res
+        .status(400)
+        .send({ message: `Photo size is greater than 1 MB` });
+    }
+
+    // Check if a new photo has been provided
     if (photo) {
+      products.name = name;
+      products.description = description;
+      products.price = price;
+      products.category = category;
+      products.quantity = quantity;
+      products.shipping = shipping;
+      products.slug = slugify(name);
       products.photo.data = fs.readFileSync(photo.path);
       products.photo.contentType = photo.type;
+    } else {
+      // If no new photo provided, keep the existing photo
+      products.name = name;
+      products.description = description;
+      products.price = price;
+      products.category = category;
+      products.quantity = quantity;
+      products.shipping = shipping;
+      products.slug = slugify(name);
     }
-    await products.save();
+
+    products = await products.save();
+
     res.status(201).send({
       success: true,
-      message: "Product Created Successfully",
-      products,
+      message: "Product updated successfully",
     });
   } catch (error) {
     console.log(error);
     res.status(500).send({
       success: false,
-      message: "Error while Updating Product",
-      error,
+      message: "Error while updating Product",
+      error: error.message,
     });
   }
 };

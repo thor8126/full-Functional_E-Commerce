@@ -4,9 +4,10 @@ import AdminMenu from "../../components/layout/AdminMenu/AdminMenu";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { Select } from "antd";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import DeletePrompt from "../../components/DeletePrompt";
 
-const CreateProduct = () => {
+const UpdateProduct = () => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
   const [category, setCategory] = useState([]);
@@ -16,7 +17,37 @@ const CreateProduct = () => {
   const [price, setPrice] = useState("");
   const [quantity, setQuantity] = useState("");
   const [shipping, setShipping] = useState("");
+  const [id, setId] = useState("");
+  const params = useParams("");
+  // this is for deleteConfomation
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
 
+  // get single product
+  const getSingleProuct = async () => {
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_APP_API}/api/v1/product/get-product/${
+          params.slug
+        }`
+      );
+      if (data?.success) {
+        setName(data?.product.name);
+        setDescription(data?.product?.description);
+        setPrice(data?.product?.price);
+        setQuantity(data?.product?.quantity);
+        setShipping(data?.product?.shipping);
+        setCategory(data?.product?.category?._id);
+        setId(data?.product._id);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("something went wrong");
+    }
+  };
+  useEffect(() => {
+    getSingleProuct();
+    // eslint-disable-next-line
+  }, []);
   // get all categories
   const getAllCategory = async () => {
     try {
@@ -34,25 +65,49 @@ const CreateProduct = () => {
 
   useEffect(() => {
     getAllCategory();
+    // eslint-disable-next-line
   }, []);
 
   // create product function
-  const handleCreate = async (e) => {
+  const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      console.log("hii");
       const productData = new FormData();
       productData.append("name", name);
       productData.append("description", description);
       productData.append("price", price);
       productData.append("quantity", quantity);
-      productData.append("photo", photo);
+      photo && productData.append("photo", photo);
       productData.append("category", category);
       productData.append("shipping", shipping);
-      const { data } = await axios.post(
-        `${import.meta.env.VITE_APP_API}/api/v1/product/create-product`,
+      const { data } = await axios.put(
+        `${import.meta.env.VITE_APP_API}/api/v1/product/update-product/${id}`,
         productData
       );
+      if (data?.success) {
+        toast.success(`${data?.message}`);
+        navigate("/dashboard/admin/products");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went Wrong");
+    }
+  };
+
+  // delete a product
+
+  const handleDelete = () => {
+    setShowDeleteConfirmation(true);
+  };
+  const handleConfirmDelete = async () => {
+    setShowDeleteConfirmation(false);
+
+    try {
+      // Perform the delete operation here
+      const { data } = await axios.delete(
+        `${import.meta.env.VITE_APP_API}/api/v1/product/delete-product/${id}`
+      );
+
       if (data?.success) {
         toast.success(`${data?.message}`);
         navigate("/dashboard/admin/products");
@@ -65,6 +120,10 @@ const CreateProduct = () => {
     }
   };
 
+  const handleCancelDelete = () => {
+    setShowDeleteConfirmation(false);
+  };
+
   return (
     <Layout title={"DashBoard - Create Product"}>
       <div className="container-fluid m-3 p-3">
@@ -73,7 +132,7 @@ const CreateProduct = () => {
             <AdminMenu />
           </div>
           <div className="col-md-9">
-            <h1>CreateProduct</h1>
+            <h1>Update Product</h1>
             <div className="m-1 w-75">
               <Select
                 bordered={false}
@@ -84,6 +143,7 @@ const CreateProduct = () => {
                 onChange={(value) => {
                   setCategory(value);
                 }}
+                value={category}
               >
                 {categories?.map((c) => (
                   <Select.Option key={c._id} value={c._id}>
@@ -94,7 +154,7 @@ const CreateProduct = () => {
               <div className="mb-3">
                 <label
                   className="
-                  btn btn-outline-secondary col-md-12"
+                btn btn-outline-secondary col-md-12"
                 >
                   {photo ? photo.name : " Upload Photo "}
                   <input
@@ -107,10 +167,21 @@ const CreateProduct = () => {
                 </label>
               </div>
               <div className="mb-3">
-                {photo && (
+                {photo ? (
                   <div className="text-center">
                     <img
                       src={URL.createObjectURL(photo)}
+                      alt={photo.name}
+                      height={"200px"}
+                      className="img img-responsive"
+                    />
+                  </div>
+                ) : (
+                  <div className="text-center">
+                    <img
+                      src={`${
+                        import.meta.env.VITE_APP_API
+                      }/api/v1/product/product-photo/${id}`}
                       alt={photo.name}
                       height={"200px"}
                       className="img img-responsive"
@@ -164,16 +235,26 @@ const CreateProduct = () => {
                   onChange={(value) => {
                     setShipping(value);
                   }}
+                  value={shipping ? "yes" : "No"}
                 >
                   <Select.Option value="0">No</Select.Option>
                   <Select.Option value="1">Yes</Select.Option>
                 </Select>
               </div>
-              <div className="mb-3">
-                <button className="btn btn-primary" onClick={handleCreate}>
-                  Create Product
+              <div className="mb-3 d-flex flex-row">
+                <button className="btn btn-primary m-1" onClick={handleUpdate}>
+                  Update Product
+                </button>
+                <button className="btn btn-danger m-1" onClick={handleDelete}>
+                  Delete Product
                 </button>
               </div>
+              {showDeleteConfirmation && (
+                <DeletePrompt
+                  onConfirm={handleConfirmDelete}
+                  onCancel={handleCancelDelete}
+                />
+              )}
             </div>
           </div>
         </div>
@@ -182,4 +263,4 @@ const CreateProduct = () => {
   );
 };
 
-export default CreateProduct;
+export default UpdateProduct;
