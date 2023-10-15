@@ -45,7 +45,7 @@ export const createProductController = async (req, res) => {
 };
 
 // get all produts
-export const getProductController = async (eq, res) => {
+export const getProductController = async (req, res) => {
   try {
     const products = await productModel
       .find({})
@@ -92,7 +92,7 @@ export const getSingleProductController = async (req, res) => {
   }
 };
 
-// get product photot
+// get product photo
 export const getProductPhotoController = async (req, res) => {
   try {
     const product = await productModel.findById(req.params.pid).select("photo");
@@ -186,6 +186,130 @@ export const updateProductController = async (req, res) => {
     res.status(500).send({
       success: false,
       message: "Error while updating Product",
+      error: error.message,
+    });
+  }
+};
+
+// filter products
+export const productFiltersController = async (req, res) => {
+  try {
+    const { checked, radio } = req.body;
+    let args = {};
+    if (checked.length > 0) args.category = checked;
+    if (radio.length) args.price = { $gte: radio[0], $lte: radio[1] };
+    const products = await productModel
+      .find(args)
+      .select("-photo")
+      .populate("category")
+      .limit(12)
+      .sort({ createdAt: -1 });
+    res.status(200).send({
+      success: true,
+      products,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error while filtering Products",
+      error: error.message,
+    });
+  }
+};
+
+// Product count
+export const productCountController = async (req, res) => {
+  try {
+    const total = await productModel.find({}).estimatedDocumentCount();
+    res.status(200).send({
+      success: true,
+      total,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error while getting count Products",
+      error: error.message,
+    });
+  }
+};
+
+// product per page
+export const productListController = async (req, res) => {
+  try {
+    const perPage = 6;
+    const page = req.params.page ? req.params.page : 1;
+    const products = await productModel
+      .find({})
+      .select("-photo")
+      .populate("category")
+      .skip((page - 1) * perPage)
+      .limit(perPage)
+      .sort({ createdAt: -1 });
+    res.status(200).send({
+      success: true,
+      products,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({
+      success: false,
+      message: "Error in per page ctrl",
+      error: error.message,
+    });
+  }
+};
+
+// search product
+export const searchProductController = async (req, res) => {
+  try {
+    const { keyword } = req.params;
+    const results = await productModel
+      .find({
+        $or: [
+          { name: { $regex: keyword, $options: "i" } },
+          { description: { $regex: keyword, $options: "i" } },
+        ],
+      })
+      .select("-photo")
+      .populate("category")
+      .sort({ createdAt: -1 });
+    res.status(200).send({
+      success: true,
+      results,
+    });
+  } catch (error) {
+    res.status(400).send({
+      success: false,
+      message: "Error in search product",
+      error: error.message,
+    });
+  }
+};
+
+// sililar products
+export const relatedProductController = async (req, res) => {
+  try {
+    const { pid, cid } = req.params;
+    const products = await productModel
+      .find({
+        category: cid,
+        _id: { $ne: pid },
+      })
+      .limit(5)
+      .select("-photo")
+      .populate("category")
+      .sort({ createdAt: -1 });
+    res.status(200).send({
+      success: true,
+      products,
+    });
+  } catch (error) {
+    res.status(400).send({
+      success: false,
+      message: "Error in similar product",
       error: error.message,
     });
   }

@@ -3,6 +3,7 @@ import { NavLink, Link } from "react-router-dom";
 import "./navbar.css";
 import { useAuth } from "../../../context/auth";
 import toast from "react-hot-toast";
+import SearchInput from "../../forms/SearchInput";
 function Header() {
   const { auth, setAuth } = useAuth();
   const handleLogOut = () => {
@@ -33,7 +34,11 @@ function Header() {
             <Link to="/" className="navbar-brand">
               🛒 E-Commerce
             </Link>
+            <div className="w-50">
+            <SearchInput  />
+            </div>
             <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
+             
               <li className="nav-item">
                 <NavLink to="/" className="nav-link " aria-current="page">
                   Home

@@ -7,3 +7,8 @@
 
 /* font-family: 'Playfair Display', serif;
 font-family: 'Poppins', sans-serif; */
+
+.LinkCssremove {
+  text-decoration: none !important;
+  color: black;
+}

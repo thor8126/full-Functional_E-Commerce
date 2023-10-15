@@ -4,7 +4,6 @@ import Layout from "../../components/layout/Layout";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
-import "./css/product.css";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -38,15 +37,15 @@ const Products = () => {
         <div className="col-md-9">
           <h1 className="text-center">All Product List</h1>
           <section style={{ backgroundColor: "#eee" }}>
-            <div className="container py-5">
-              <div className="row">
+            <div className="container py-5 w-100">
+              <div className="d-flex flex-wrap justify-content-around">
                 {products?.map((p) => (
-                  <div className="col-md-6 col-lg-4 mb-4 mb-md-0" key={p._id}>
+                  <div className="mb-4 mx-2" key={p._id}>
                     <Link
                       to={`/dashboard/admin/product/${p?.slug}`}
                       className="LinkCssremove"
                     >
-                      <div className="card mb-2">
+                      <div className="card mb-2" style={{ width: "18rem" }}>
                         <div className="d-flex justify-content-between p-3">
                           <p className="lead mb-0">{p.name}</p>
                         </div>
@@ -56,6 +55,7 @@ const Products = () => {
                           }/api/v1/product/product-photo/${p._id}`}
                           className="card-img-top"
                           alt={p.name}
+                          height={"250px"}
                         />
                         <div className="card-body">
                           <div className="d-flex justify-content-between">

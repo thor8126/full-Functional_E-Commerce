@@ -18,14 +18,16 @@ import Orders from "./pages/user/Orders";
 import Profile from "./pages/user/Profile";
 import Products from "./pages/Admin/Products";
 import UpdateProduct from "./pages/Admin/UpdateProduct";
-// import { AuthProvider } from "./context/auth.jsx";
+import Search from "./pages/Search";
+import ProductDetail from "./pages/ProductDetail";
 function App() {
   return (
     <>
-      {/* <AuthProvider> */}
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<HomePage />} />
+          <Route path="/product/:slug" element={<ProductDetail />} />
+          <Route path="/search" element={<Search />} />
           <Route path="/dashboard" element={<PrivateRoute />}>
             <Route path="user" element={<DashBoard />} />
             <Route path="user/orders" element={<Orders />} />
@@ -48,7 +50,6 @@ function App() {
           <Route path="/*" element={<PageNotFound />} />
         </Routes>
       </BrowserRouter>
-      {/* </AuthProvider> */}
     </>
   );
 }

@@ -1,0 +1,130 @@
+import React, { useState, useEffect } from "react";
+import Layout from "../components/layout/Layout";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
+const ProductDetail = () => {
+  const params = useParams();
+  const [product, setProduct] = useState({});
+  const [relatedProduts, setRelatedProduts] = useState([]);
+  const navigate = useNavigate();
+  // initials p details
+  useEffect(() => {
+    if (params?.slug) getProduct();
+  }, [params?.slug]);
+  // get product
+  const getProduct = async () => {
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_APP_API}/api/v1/product/get-product/${
+          params.slug
+        }`
+      );
+      setProduct(data?.product);
+      getSimilarProducts(data?.product?._id, data?.product?.category?._id);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // get similar products
+  const getSimilarProducts = async (pid, cid) => {
+    try {
+      const { data } = await axios.get(
+        `${
+          import.meta.env.VITE_APP_API
+        }/api/v1/product/related-product/${pid}/${cid}`
+      );
+      setRelatedProduts(data?.products);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  return (
+    <Layout>
+      <div className="row container mt-2">
+        <div className="col-md-5">
+          <img
+            src={`${
+              import.meta.env.VITE_APP_API
+            }/api/v1/product/product-photo/${product._id}`}
+            className="card-img-top rounded-3 w-75"
+            alt={product.name}
+          />
+        </div>
+        <div className="col-md-6 x">
+          <h1 className="text-center">Product Details</h1>
+          <h6>Name : {product?.name}</h6>
+          <h6>Description : {product?.description}</h6>
+          <h6>Price : {product?.price}</h6>
+          <h6>Category : {product?.category?.name}</h6>
+          <h6>Quantity : {product?.quantity}</h6>
+          <button type="button" className="btn btn-secondary flex-fill ms-1">
+            Add To Cart
+          </button>
+        </div>
+      </div>
+      <div className="row text-center mt-5">
+        <h3 className="mb-5">similar products</h3>
+        <div className="d-flex flex-wrap justify-content-around ">
+          {relatedProduts?.map((p) => (
+            <div className="mb-4 mx-2" key={p._id}>
+              <div className="card mb-2" style={{ width: "18rem" }}>
+                <div className="d-flex justify-content-between p-3">
+                  <p className="lead mb-0">{p.name}</p>
+                </div>
+                <img
+                  src={`${
+                    import.meta.env.VITE_APP_API
+                  }/api/v1/product/product-photo/${p._id}`}
+                  className="card-img-top"
+                  alt={p.name}
+                  height={"250px"}
+                />
+                <div className="card-body">
+                  <div className="d-flex justify-content-between">
+                    <p className="small">
+                      <a href="#!" className="text-muted">
+                        {p.name}
+                      </a>
+                    </p>
+                    <p className="small text-danger">
+                      <s>${p.price + p.price * 0.5}</s>
+                    </p>
+                  </div>
+                  <div className="d-flex justify-content-between mb-3">
+                    <h5 className="mb-0">{p.description}</h5>
+                    <h5 className="text-dark mb-0">${p.price}</h5>
+                  </div>
+                  <div className="d-flex justify-content-between mb-2">
+                    <p className="text-muted mb-0">
+                      Available: <span className="fw-bold">{p.quantity}</span>
+                    </p>
+                  </div>
+                  <div className="d-flex flex-row">
+                    <button
+                      type="button"
+                      className="btn btn-primary flex-fill me-1"
+                      data-mdb-ripple-color="dark"
+                      onClick={() => navigate(`/product/${p.slug}`)}
+                    >
+                      More Details
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-secondary flex-fill ms-1"
+                    >
+                      Add To Cart
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </Layout>
+  );
+};
+
+export default ProductDetail;
