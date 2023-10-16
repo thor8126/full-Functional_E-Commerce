@@ -64,8 +64,11 @@ const ProductDetail = () => {
           </button>
         </div>
       </div>
-      <div className="row text-center mt-5">
+      <div className="row text-center container-fluid mt-5">
         <h3 className="mb-5">similar products</h3>
+        {relatedProduts.length < 1 && (
+          <p className="text-center">No Similar Products</p>
+        )}
         <div className="d-flex flex-wrap justify-content-around ">
           {relatedProduts?.map((p) => (
             <div className="mb-4 mx-2" key={p._id}>

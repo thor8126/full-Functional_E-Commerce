@@ -1,11 +1,18 @@
 import React from "react";
 import { NavLink, Link } from "react-router-dom";
 import "./navbar.css";
-import { useAuth } from "../../../context/auth";
+import { useAuth } from "../../../context/Auth";
 import toast from "react-hot-toast";
 import SearchInput from "../../forms/SearchInput";
+import useCategory from "../../../hooks/useCategory";
+import { useCart } from "../../../context/Cart";
+import { Badge } from "antd";
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 function Header() {
+  const [cart, setCart] = useCart();
   const { auth, setAuth } = useAuth();
+  const categories = useCategory();
   const handleLogOut = () => {
     setAuth({
       ...auth,
@@ -35,20 +42,41 @@ function Header() {
               🛒 E-Commerce
             </Link>
             <div className="w-50">
-            <SearchInput  />
+              <SearchInput />
             </div>
             <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-             
               <li className="nav-item">
                 <NavLink to="/" className="nav-link " aria-current="page">
                   Home
                 </NavLink>
               </li>
-              <li className="nav-item">
-                <NavLink to="/category" className="nav-link ">
-                  Category
-                </NavLink>
+              <li className="nav-item dropdown">
+                <Link
+                  className="nav-link dropdown-toggle"
+                  id="navbarDropdown"
+                  data-bs-toggle="dropdown"
+                >
+                  Categories
+                </Link>
+                <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <li>
+                    <Link className="dropdown-item" to={`/categories`}>
+                      All Categories
+                    </Link>
+                  </li>
+                  {categories?.map((c) => (
+                    <li key={c._id}>
+                      <Link
+                        className="dropdown-item"
+                        to={`/category/${c.slug}`}
+                      >
+                        {c.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </li>
+
               {!auth?.user ? (
                 <>
                   <li className="nav-item">
@@ -104,9 +132,15 @@ function Header() {
                 </>
               )}
               <li className="nav-item">
-                <NavLink to="/cart" className="nav-link">
-                  Cart(0)
-                </NavLink>
+                <Badge count={cart?.length} showZero>
+                  <NavLink to="/cart" className="nav-link">
+                    {cart?.length === 0 ? (
+                      <ShoppingCartOutlinedIcon />
+                    ) : (
+                      <ShoppingCartIcon />
+                    )}
+                  </NavLink>
+                </Badge>
               </li>
             </ul>
           </div>

@@ -4,12 +4,15 @@ import App from "./App.jsx";
 import "./index.css";
 import { AuthProvider } from "./context/auth.jsx";
 import { SearchProvider } from "./context/Search.jsx";
+import { CartProvider } from "./context/Cart.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   // <React.StrictMode>
   <AuthProvider>
     <SearchProvider>
-      <App />
+      <CartProvider>
+        <App />
+      </CartProvider>
     </SearchProvider>
   </AuthProvider>
   //  </React.StrictMode>
