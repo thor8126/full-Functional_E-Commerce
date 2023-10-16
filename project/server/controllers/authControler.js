@@ -113,6 +113,47 @@ export const testController = (req, res) => {
   res.status(200).send({ yes: "Success fully working" });
 };
 
+// update profile
+export const updateProfileController = async (req, res) => {
+  try {
+    const { name, password, phone, address } = req.body;
+    // validation
+    const user = await userModel.findById(req.user._id);
+    // password
+    if (password && password.length < 6) {
+      return res.send({
+        success: false,
+        message: "password is required and 6 character long",
+      });
+    }
+    const hashedPassword = password
+      ? await hashPassword(password)
+      : user.password;
+    const updatedUser = await userModel.findByIdAndUpdate(
+      req.user._id,
+      {
+        name: name || user.name,
+        password: hashedPassword,
+        phone: phone || user.phone,
+        address: address || user.address,
+      },
+      { new: true }
+    );
+
+    return res.status(200).send({
+      success: true,
+      message: "Profile Updated Successfully",
+      updatedUser,
+    });
+  } catch (error) {
+    return res.status(500).send({
+      success: false,
+      message: "Error in While Updating The Profile",
+      error: error.message,
+    });
+  }
+};
+
 // forgotPasswordControler
 export const forgotPasswordControler = async (req, res) => {
   try {
