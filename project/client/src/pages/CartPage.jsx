@@ -1,20 +1,25 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../components/layout/Layout";
 import { useCart } from "../context/Cart";
 import { useAuth } from "../context/Auth";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import toast from "react-hot-toast";
+import DropIn from "braintree-web-drop-in-react";
+import axios from "axios";
 const CartPage = () => {
   const [cart, setCart] = useCart();
   const { auth, setAuth } = useAuth();
+  const [clientToken, setClientToken] = useState("");
+  const [instance, setInstance] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
   // total price
-  const totalPrice = () => {
+  const totalPrice = (val) => {
     try {
       let total = 0;
       cart?.map((item) => (total = total + item.price));
+      total = total > 0 ? total + val : total + 0;
       return total.toLocaleString("en-US", {
         style: "currency",
         currency: "USD",
@@ -35,6 +40,41 @@ const CartPage = () => {
     } catch (error) {
       console.log(error);
       toast.error("Something went wrong");
+    }
+  };
+
+  // get payment gateway token
+  const getToken = async () => {
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_APP_API}/api/v1/product/braintree/token`
+      );
+      setClientToken(data?.clientToken);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  useEffect(() => {
+    getToken();
+  }, [auth?.token]);
+
+  // handle Paymenst
+  const handlePayment = async () => {
+    try {
+      setLoading(true);
+      const { nonce } = await instance.requestPaymentMethod();
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_APP_API}/api/v1/product/braintree/payments`,
+        { nonce, cart }
+      );
+      setLoading(false);
+      localStorage.removeItem("cart");
+      setCart([]);
+      navigate("/dashboard/user/orders");
+      toast.success("payment completed succesfully");
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
     }
   };
   return (
@@ -60,7 +100,7 @@ const CartPage = () => {
                 <div className="card">
                   <div className="card-body p-4">
                     <div className="row">
-                      <div className="col-lg-7">
+                      <div>
                         <h5 className="mb-3">
                           <a href="#!" className="text-body">
                             <i className="fas fa-long-arrow-alt-left me-2" />
@@ -85,7 +125,7 @@ const CartPage = () => {
                           </div>
                         </div>
                         {cart?.map((p) => (
-                          <div className="card mb-3 mb-lg-0">
+                          <div className="card mb-3 mb-lg-0" key={p._id}>
                             <div className="card-body">
                               <div className="d-flex justify-content-between">
                                 <div className="d-flex flex-row align-items-center">
@@ -134,103 +174,16 @@ const CartPage = () => {
                           </div>
                         ))}
                       </div>
-                      <div className="col-lg-5">
-                        <div className="card bg-secondary text-white rounded-3">
+                      <div>
+                        <div className="card  rounded-3">
                           <div className="card-body">
-                            <div className="d-flex justify-content-between align-items-center mb-4">
-                              <h5 className="mb-0">Card details</h5>
+                            <div className="d-flex justify-content-between align-items-center ">
+                              <h5 className="mb-0">User details</h5>
                             </div>
-                            <p className="small mb-2">Card type</p>
-                            <a href="#!" type="submit" className="text-white">
-                              <i className="fab fa-cc-mastercard fa-2x me-2" />
-                            </a>
-                            <a href="#!" type="submit" className="text-white">
-                              <i className="fab fa-cc-visa fa-2x me-2" />
-                            </a>
-                            <a href="#!" type="submit" className="text-white">
-                              <i className="fab fa-cc-amex fa-2x me-2" />
-                            </a>
-                            <a href="#!" type="submit" className="text-white">
-                              <i className="fab fa-cc-paypal fa-2x" />
-                            </a>
-                            <form className="mt-4">
-                              <div className="form-outline form-white mb-4">
-                                <input
-                                  type="text"
-                                  id="typeName"
-                                  className="form-control form-control-lg"
-                                  siez={17}
-                                  placeholder="Cardholder's Name"
-                                />
-                                <label
-                                  className="form-label"
-                                  htmlFor="typeName"
-                                >
-                                  Cardholder's Name
-                                </label>
-                              </div>
-                              <div className="form-outline form-white mb-4">
-                                <input
-                                  type="text"
-                                  id="typeText"
-                                  className="form-control form-control-lg"
-                                  siez={17}
-                                  placeholder="1234 5678 9012 3457"
-                                  minLength={19}
-                                  maxLength={19}
-                                />
-                                <label
-                                  className="form-label"
-                                  htmlFor="typeText"
-                                >
-                                  Card Number
-                                </label>
-                              </div>
-                              <div className="row mb-4">
-                                <div className="col-md-6">
-                                  <div className="form-outline form-white">
-                                    <input
-                                      type="text"
-                                      id="typeExp"
-                                      className="form-control form-control-lg"
-                                      placeholder="MM/YYYY"
-                                      size={7}
-                                      minLength={7}
-                                      maxLength={7}
-                                    />
-                                    <label
-                                      className="form-label"
-                                      htmlFor="typeExp"
-                                    >
-                                      Expiration
-                                    </label>
-                                  </div>
-                                </div>
-                                <div className="col-md-6">
-                                  <div className="form-outline form-white">
-                                    <input
-                                      type="password"
-                                      id="typeText"
-                                      className="form-control form-control-lg"
-                                      placeholder="●●●"
-                                      size={1}
-                                      minLength={3}
-                                      maxLength={3}
-                                    />
-                                    <label
-                                      className="form-label"
-                                      htmlFor="typeText"
-                                    >
-                                      Cvv
-                                    </label>
-                                  </div>
-                                </div>
-                              </div>
-                            </form>
                             <hr className="my-4" />
                             <div className="d-flex justify-content-between">
                               <p className="mb-2">Subtotal</p>
-                              <p className="mb-2">$4798.00</p>
+                              <p className="mb-2">{totalPrice(0)}</p>
                             </div>
                             <div className="d-flex justify-content-between">
                               <p className="mb-2">Shipping</p>
@@ -238,20 +191,86 @@ const CartPage = () => {
                             </div>
                             <div className="d-flex justify-content-between mb-4">
                               <p className="mb-2">Total(Incl. taxes)</p>
-                              <p className="mb-2">{totalPrice()}</p>
+                              <p className="mb-2">{totalPrice(20)}</p>
                             </div>
-                            <button
-                              type="button"
-                              className="btn btn-info btn-block btn-lg"
-                            >
-                              <div className="d-flex justify-content-between">
-                                <span>$4818.00</span>
-                                <span>
-                                  Checkout{" "}
-                                  <i className="fas fa-long-arrow-alt-right ms-2" />
-                                </span>
+                            <div className="flex flex-column">
+                              {auth?.user?.address ? (
+                                <>
+                                  <div className="mt-2 mb-2">
+                                    <h5>{auth?.user?.address}</h5>
+                                    <button
+                                      className="btn btn-outline-warning"
+                                      onClick={() =>
+                                        navigate("/dashboard/user/profile", {
+                                          state: "/cart",
+                                        })
+                                      }
+                                    >
+                                      Update Address
+                                    </button>
+                                  </div>
+                                </>
+                              ) : (
+                                <div className="mb-3">
+                                  {auth?.token ? (
+                                    <button
+                                      className="btn btn-outline-warning"
+                                      onClick={() =>
+                                        navigate("/dashboard/user/profile", {
+                                          state: "/cart",
+                                        })
+                                      }
+                                    >
+                                      Update Address
+                                    </button>
+                                  ) : (
+                                    <button
+                                      className="btn btn-outline-warning"
+                                      onClick={() =>
+                                        navigate("/login", {
+                                          state: "/cart",
+                                        })
+                                      }
+                                    >
+                                      Plase Login to checkout
+                                    </button>
+                                  )}
+                                </div>
+                              )}
+
+                              <div className="text-center">
+                                {!clientToken || !cart?.length ? (
+                                  ""
+                                ) : (
+                                  <>
+                                    <DropIn
+                                      options={{
+                                        authorization: clientToken,
+                                        paypal: {
+                                          flow: "vault",
+                                        },
+                                      }}
+                                      onInstance={(instance) =>
+                                        setInstance(instance)
+                                      }
+                                    />
+                                    <button
+                                      className="btn btn-primary "
+                                      onClick={handlePayment}
+                                      disabled={
+                                        loading ||
+                                        !instance ||
+                                        !auth?.user?.address
+                                      }
+                                    >
+                                      {loading
+                                        ? "processing ..."
+                                        : "Make Payment"}
+                                    </button>
+                                  </>
+                                )}
                               </div>
-                            </button>
+                            </div>
                           </div>
                         </div>
                       </div>

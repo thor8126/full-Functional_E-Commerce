@@ -3,6 +3,8 @@ import express from "express";
 const router = express.Router();
 import { isAdmin, requireSignIn } from "../middleware/authMiddleware.js";
 import {
+  brainTreePaymentsController,
+  brainTreeTokenController,
   createProductController,
   deleteProductController,
   getProductController,
@@ -67,5 +69,12 @@ router.get("/related-product/:pid/:cid", relatedProductController);
 
 // category wise products
 router.get("/product-category/:slug", productCategoryController);
+
+//payments route
+// token
+router.get("/braintree/token", brainTreeTokenController);
+
+// payments
+router.post("/braintree/payments", requireSignIn, brainTreePaymentsController);
 
 export default router;

@@ -2,7 +2,21 @@ import slugify from "slugify";
 import productModel from "../models/productModel.js";
 import categortModel from "../models/categortModel.js";
 import fs from "fs";
+import OrderModel from "../models/OrderModel.js";
+import braintree from "braintree";
+import dotenv from "dotenv";
 
+dotenv.config();
+
+// payment gateay
+const gateway = new braintree.BraintreeGateway({
+  environment: braintree.Environment.Sandbox,
+  merchantId: process.env.BRAINTREE_MERCHANT_ID,
+  publicKey: process.env.BRAINTREE_PUBLIC_KEY,
+  privateKey: process.env.BRAINTREE_PRIVATE_KEY,
+});
+
+// creating a new Product
 export const createProductController = async (req, res) => {
   try {
     const { name, slug, description, price, category, quantity, shipping } =
@@ -335,5 +349,56 @@ export const productCategoryController = async (req, res) => {
       message: "Error in category wise product",
       error: error.message,
     });
+  }
+};
+
+// payment gateway api
+export const brainTreeTokenController = async (req, res) => {
+  try {
+    gateway.clientToken.generate({}, function (err, response) {
+      if (err) {
+        console.log(err);
+        res.status(500).send(err);
+      } else {
+        res.send(response);
+      }
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// // payments
+export const brainTreePaymentsController = async (req, res) => {
+  try {
+    const { cart, nonce } = req.body;
+    let total = 0;
+    cart.map((item) => (total = total + item.price));
+    let newTransaction = gateway.transaction.sale(
+      {
+        amount: total,
+        paymentMethodNonce: nonce,
+        options: {
+          submitForSettlement: true,
+        },
+      },
+      function (error, result) {
+        if (result) {
+          const order = new OrderModel({
+            products: cart,
+            payment: result,
+            buyer: req.user._id,
+          }).save();
+          res.json({ ok: true });
+        } else {
+          res.status(500).send({
+            message: error.message,
+            error: error,
+          });
+        }
+      }
+    );
+  } catch (error) {
+    console.log(error);
   }
 };

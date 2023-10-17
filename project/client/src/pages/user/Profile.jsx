@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import UserMenu from "../../components/layout/UserMenu/UserMenu";
 import Layout from "../../components/layout/Layout";
-
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useAuth } from "../../context/Auth";
@@ -13,6 +13,8 @@ const Profile = () => {
   const [address, setAddress] = useState("");
   const [phone, setPhone] = useState("");
   const { auth, setAuth } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   // get user Data
   useEffect(() => {
@@ -38,6 +40,7 @@ const Profile = () => {
         ls.user = data?.updatedUser;
         localStorage.setItem("auth", JSON.stringify(ls));
         toast.success(data?.message);
+        navigate(location.state || "/cart");
       } else {
         toast.error(data?.message);
       }
