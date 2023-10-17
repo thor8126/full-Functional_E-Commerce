@@ -1,5 +1,6 @@
 import { comparePassword, hashPassword } from "../helpers/authHelper.js";
 import userModel from "../models/userModel.js";
+import OrderModel from "../models/OrderModel.js";
 import JWt from "jsonwebtoken";
 
 export const registerControler = async (req, res) => {
@@ -187,6 +188,74 @@ export const forgotPasswordControler = async (req, res) => {
       success: false,
       message: "Something went wrong",
       error,
+    });
+  }
+};
+
+// get orders3
+export const getOrdersController = async (req, res) => {
+  try {
+    const orders = await OrderModel.find({ buyer: req.user._id })
+      .populate("products", "-photo")
+      .populate("buyer", "name");
+    return res.status(200).send({
+      success: true,
+      message: "Order recieved succefully",
+      orders,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error while getting the Orders",
+      error: error.message,
+    });
+  }
+};
+
+// get alll Orders
+export const getAllOrdersController = async (req, res) => {
+  try {
+    const orders = await OrderModel.find({})
+      .populate("products", "-photo")
+      .populate("buyer", "name")
+      .sort({ createdAt: "-1" });
+    return res.status(200).send({
+      success: true,
+      message: "Order recieved succefully",
+      orders,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error while getting All Orders",
+      error: error.message,
+    });
+  }
+};
+
+// updating the order status
+export const orderStatusController = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { status } = req.body;
+    const order = await OrderModel.findByIdAndUpdate(
+      orderId,
+      { status },
+      { new: true }
+    );
+    return res.status(200).send({
+      success: true,
+      message: "Order status updated succefully",
+      order,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error while updating Order status",
+      error: error.message,
     });
   }
 };
