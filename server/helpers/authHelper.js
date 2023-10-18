@@ -12,7 +12,7 @@ export const hashPassword = async (password) => {
 export const comparePassword = async (password, hashPassword) => {
   try {
     return await bcrypt.compare(password, hashPassword);
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
+    console.log(err);
   }
 };

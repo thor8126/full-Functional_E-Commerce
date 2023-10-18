@@ -1,7 +1,7 @@
 import React from "react";
 import Layout from "../../components/layout/Layout";
 import AdminMenu from "../../components/layout/AdminMenu/AdminMenu";
-import { useAuth } from "../../context/auth";
+import { useAuth } from "../../context/Auth";
 const AdminDashboard = () => {
   const { auth } = useAuth();
   return (

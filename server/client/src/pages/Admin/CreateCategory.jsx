@@ -12,7 +12,7 @@ function CreateCategory() {
   const [visible, setVisible] = useState(false);
   const [selected, setSelected] = useState(false);
   const [updatedName, setUpdatedName] = useState("");
-  
+
   // handle form
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -49,7 +49,6 @@ function CreateCategory() {
     }
   };
 
-  
   useEffect(() => {
     getAllCategory();
   }, []);

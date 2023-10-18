@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import "./AuthStyles/authstyle.css";
-import { useAuth } from "../../context/auth";
+import { useAuth } from "../../context/Auth"; 
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");

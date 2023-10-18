@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
-import { AuthProvider } from "./context/auth.jsx";
+import { AuthProvider } from "./context/Auth.jsx";
 import { SearchProvider } from "./context/Search.jsx";
 import { CartProvider } from "./context/Cart.jsx";
 
