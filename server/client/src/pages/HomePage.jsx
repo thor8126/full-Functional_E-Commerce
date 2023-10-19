@@ -6,6 +6,8 @@ import { Prices } from "../components/Prices";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/Cart";
 import toast from "react-hot-toast";
+import { Box } from "@mui/material";
+import { Slider } from "@mui/material";
 function HomePage() {
   const [cart, setCart] = useCart();
   const [products, setProducts] = useState([]);
@@ -16,6 +18,8 @@ function HomePage() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState();
   const navigate = useNavigate();
+  const [value, setValue] = React.useState([0, 1000]);
+  const [filterTimeout, setFilterTimeout] = useState(null);
 
   // get all categories
   const getAllCategory = async () => {
@@ -106,7 +110,7 @@ function HomePage() {
     try {
       const { data } = await axios.post(
         `${import.meta.env.VITE_APP_API}/api/v1/product/product-filters`,
-        { checked, radio }
+        { value }
       );
       console.log(data?.products);
       setProducts(data?.products);
@@ -116,10 +120,33 @@ function HomePage() {
     }
   };
 
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+
+  // Function to format the value with a dollar sign
+  const valuetext = (value) => {
+    return `$${value}`;
+  };
+
+  // Filter products with a delay
+  const filterProductsWithDelay = (newValue) => {
+    if (filterTimeout) {
+      clearTimeout(filterTimeout); // Clear the previous timeout
+    }
+
+    // Set a new timeout to filter after 2000ms (2 seconds)
+    const newFilterTimeout = setTimeout(() => {
+      filterProducts(newValue);
+    }, 2000);
+
+    setFilterTimeout(newFilterTimeout);
+  };
+
   // useEffect
   useEffect(() => {
-    if (checked.length || radio.length) filterProducts();
-  }, [checked, radio]);
+    filterProductsWithDelay(value);
+  }, [value]);
 
   return (
     <Layout title={"All Products - Best Offers"}>
@@ -138,14 +165,29 @@ function HomePage() {
           </div>
           {/* price filter */}
           <h4 className="text-center mt-4">Fileter by Prices</h4>
-          <div className="d-flex flex-column m-2">
-            <Radio.Group onChange={(e) => setRadio(e.target.value)}>
-              {Prices?.map((p) => (
-                <div key={p._id}>
-                  <Radio value={p.array}>{p.name}</Radio>
-                </div>
-              ))}
-            </Radio.Group>
+          <div className="container">
+            <div className="d-flex justify-content-between">
+              <div>Low: ${value[0]}</div>
+              <div>High: ${value[1]}</div>
+            </div>
+            <Box sx={{ width: 300 }}>
+              <Slider
+                value={value}
+                onChange={handleChange}
+                valueLabelDisplay="auto"
+                valueLabelFormat={valuetext} // Use the valuetext function to format the label
+                min={0}
+                max={1000}
+                size="big"
+                sx={{
+                  "& .MuiSlider-valueLabel": {
+                    borderRadius: "50%", // Adjust the value label border-radius
+                    padding: "4px", // Adjust the padding for value label
+                    fontSize: "15px",
+                  },
+                }}
+              />
+            </Box>
           </div>
           <div className="d-flex flex-column m-2 w-50">
             <button

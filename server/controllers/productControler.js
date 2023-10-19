@@ -209,10 +209,9 @@ export const updateProductController = async (req, res) => {
 // filter products
 export const productFiltersController = async (req, res) => {
   try {
-    const { checked, radio } = req.body;
+    const { value } = req.body;
     let args = {};
-    if (checked.length > 0) args.category = checked;
-    if (radio.length) args.price = { $gte: radio[0], $lte: radio[1] };
+    if (value.length) args.price = { $gte: value[0], $lte: value[1] };
     const products = await productModel
       .find(args)
       .select("-photo")
