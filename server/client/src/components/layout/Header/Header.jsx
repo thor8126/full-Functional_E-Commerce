@@ -39,7 +39,8 @@ function Header() {
           </button>
           <div className="collapse navbar-collapse" id="navbarTogglerDemo01">
             <Link to="/" className="navbar-brand">
-              🛒 E-Commerce
+              <img src="../logo/2_generated.png" height="50px" />
+              Shoe-Dream
             </Link>
             <div className="w-50">
               <SearchInput />

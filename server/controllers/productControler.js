@@ -17,21 +17,39 @@ const gateway = new braintree.BraintreeGateway({
 });
 
 // creating a new Product
-export const createProductController = async (req, res) => {
+export const createProductController = async (req, res, next) => {
   try {
-    const { name, slug, description, price, category, quantity, shipping } =
+    const { name, description, price, category, shipping, brand, isAvailable } =
       req.fields;
+    const size = JSON.parse(req.fields.size);
+    const colors = JSON.parse(req.fields.colors);
+
     const { photo } = req.files;
     let keys = [
       "name",
       "description",
       "price",
       "category",
-      "quantity",
       "photo",
+      "shipping",
+      "brand",
+      "size",
+      "colors",
+      "isAvailable",
     ];
 
-    [name, description, price, category, quantity, photo].forEach((key, i) => {
+    [
+      name,
+      description,
+      price,
+      category,
+      photo,
+      shipping,
+      brand,
+      size,
+      colors,
+      isAvailable,
+    ].forEach((key, i) => {
       if (!key) {
         return res.status(404).send({ message: `${keys[i]} is required` });
       }
@@ -128,7 +146,7 @@ export const getProductPhotoController = async (req, res) => {
 // delete a product
 export const deleteProductController = async (req, res) => {
   try {
-    await productModel.findByIdAndDelete(req.params.pid).select("-photo");
+    await productModel.findByIdAndDelete(req.params.pid);
     res.status(200).send({
       success: true,
       message: "Product Deleted SuccessFully",
@@ -146,16 +164,29 @@ export const deleteProductController = async (req, res) => {
 // update product conroler
 export const updateProductController = async (req, res) => {
   try {
-    const { name, slug, description, price, category, quantity, shipping } =
+    const { name, description, price, category, shipping, brand, isAvailable } =
       req.fields;
+    console.log(category);
+    const size = JSON.parse(req.fields.size);
+    const colors = JSON.parse(req.fields.colors);
     const { photo } = req.files;
-    let keys = ["name", "description", "price", "category", "quantity"];
+    let keys = [
+      "name",
+      "description",
+      "price",
+      "category",
+      "shipping",
+      "brand",
+      "size",
+      "colors",
+      "isAvailable",
+    ];
 
-    [name, description, price, category, quantity].forEach((key, i) => {
-      if (!key) {
-        return res.status(400).send({ message: `${keys[i]} is required` });
+    for (const key of keys) {
+      if (!req.fields[key]) {
+        return res.status(400).send({ message: `${key} is required` });
       }
-    });
+    }
     let products = await productModel.findById(req.params.pid);
 
     if (!products) {
@@ -174,8 +205,12 @@ export const updateProductController = async (req, res) => {
       products.description = description;
       products.price = price;
       products.category = category;
-      products.quantity = quantity;
       products.shipping = shipping;
+      products.brand = brand;
+      products.size = size;
+      products.colors = colors;
+      products.isAvailable = isAvailable === "true";
+
       products.slug = slugify(name);
       products.photo.data = fs.readFileSync(photo.path);
       products.photo.contentType = photo.type;
@@ -185,14 +220,17 @@ export const updateProductController = async (req, res) => {
       products.description = description;
       products.price = price;
       products.category = category;
-      products.quantity = quantity;
       products.shipping = shipping;
+      products.brand = brand;
+      products.size = size;
+      products.colors = colors;
+      products.isAvailable = isAvailable === "true";
       products.slug = slugify(name);
     }
 
-    products = await products.save();
+    await products.save();
 
-    res.status(201).send({
+    return res.status(201).send({
       success: true,
       message: "Product updated successfully",
     });
@@ -209,8 +247,9 @@ export const updateProductController = async (req, res) => {
 // filter products
 export const productFiltersController = async (req, res) => {
   try {
-    const { value } = req.body;
+    const { checked, value } = req.body;
     let args = {};
+    if (checked.length > 0) args.category = checked;
     if (value.length) args.price = { $gte: value[0], $lte: value[1] };
     const products = await productModel
       .find(args)

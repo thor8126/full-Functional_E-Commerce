@@ -192,7 +192,7 @@ export const forgotPasswordControler = async (req, res) => {
   }
 };
 
-// get orders3
+// get orders
 export const getOrdersController = async (req, res) => {
   try {
     const orders = await OrderModel.find({ buyer: req.user._id })

@@ -1,5 +1,4 @@
 import express from "express";
-
 const router = express.Router();
 import { isAdmin, requireSignIn } from "../middleware/authMiddleware.js";
 import {
@@ -27,7 +26,7 @@ router.post(
   "/create-product",
   requireSignIn,
   isAdmin,
-  formidable(),
+  formidable({ multiples: true }),
   createProductController
 );
 

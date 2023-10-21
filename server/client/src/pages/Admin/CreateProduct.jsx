@@ -3,8 +3,9 @@ import Layout from "../../components/layout/Layout";
 import AdminMenu from "../../components/layout/AdminMenu/AdminMenu";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { Select } from "antd";
 import { useNavigate } from "react-router-dom";
+import { ShoeColor, ShoeSize, brands } from "../../components/material";
+import CreatableSelect from "react-select/creatable";
 
 const CreateProduct = () => {
   const navigate = useNavigate();
@@ -14,9 +15,39 @@ const CreateProduct = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [quantity, setQuantity] = useState("");
   const [shipping, setShipping] = useState("");
+  const [sizes, setSizes] = useState([]);
+  const [colors, setColors] = useState([]);
+  const [brand, setBrand] = useState("");
+  const [isAvailable, setIsAvailable] = useState("false");
 
+  const categoryOptions = categories?.map((category) => ({
+    label: category.name,
+    value: category.name,
+    id: category._id,
+  }));
+
+  const colorOptions = ShoeColor.map((color, index) => ({
+    label: color,
+    value: color,
+    id: index, 
+  }));
+
+  const sizeOptions = ShoeSize.map((size, index) => ({
+    label: size.toString(),
+    value: size,
+    id: index, 
+  }));
+  const brandOptions = brands.map((brand, index) => ({
+    label: brand,
+    value: brand,
+    id: index, 
+  }));
+  // for availabe or not
+  const options = [
+    { value: "yes", label: "Yes" },
+    { value: "no", label: "No" },
+  ];
   // get all categories
   const getAllCategory = async () => {
     try {
@@ -40,15 +71,20 @@ const CreateProduct = () => {
   const handleCreate = async (e) => {
     e.preventDefault();
     try {
-      console.log("hii");
+      const sizeValues = sizes.map((size) => size);
+      const colorValues = colors.map((color) => color);
       const productData = new FormData();
       productData.append("name", name);
       productData.append("description", description);
       productData.append("price", price);
-      productData.append("quantity", quantity);
       productData.append("photo", photo);
-      productData.append("category", category);
-      productData.append("shipping", shipping);
+      productData.append("category", category.id);
+      productData.append("brand", brand);
+      productData.append("size", JSON.stringify(sizeValues));
+      productData.append("colors", JSON.stringify(colorValues));
+
+      productData.append("shipping", shipping === "yes" ? true : false);
+      productData.append("isAvailable", isAvailable === "yes" ? true : false);
       const { data } = await axios.post(
         `${import.meta.env.VITE_APP_API}/api/v1/product/create-product`,
         productData
@@ -75,49 +111,58 @@ const CreateProduct = () => {
           <div className="col-md-9">
             <h1>CreateProduct</h1>
             <div className="m-1 w-75">
-              <Select
-                bordered={false}
-                placeholder="Select a category"
-                size="large"
-                showSearch
-                className="form-select mb-3"
-                onChange={(value) => {
-                  setCategory(value);
+              {/* category */}
+
+              <CreatableSelect
+                isClearable
+                options={categoryOptions}
+                className="mb-3"
+                onChange={(newValue) => {
+                  setCategory(newValue);
                 }}
-              >
-                {categories?.map((c) => (
-                  <Select.Option key={c._id} value={c._id}>
-                    {c.name}
-                  </Select.Option>
-                ))}
-              </Select>
-              <div className="mb-3">
-                <label
-                  className="
-                  btn btn-outline-secondary col-md-12"
-                >
-                  {photo ? photo.name : " Upload Photo "}
-                  <input
-                    type="file"
-                    name="photo"
-                    accept="image/*"
-                    onChange={(e) => setPhoto(e.target.files[0])}
-                    hidden
-                  />
-                </label>
-              </div>
-              <div className="mb-3">
-                {photo && (
-                  <div className="text-center">
-                    <img
-                      src={URL.createObjectURL(photo)}
-                      alt={photo.name}
-                      height={"200px"}
-                      className="img img-responsive"
-                    />
-                  </div>
-                )}
-              </div>
+              />
+
+              {/* size */}
+              <CreatableSelect
+                isMulti
+                className="mb-3"
+                options={colorOptions}
+                onChange={(selectedOptions) => {
+                  // Extract the selected color values
+                  const selectedColors = selectedOptions.map(
+                    (option) => option.value
+                  );
+                  setColors(selectedColors);
+                }}
+                placeholder="Please Select a Color"
+              />
+
+              {/* colors */}
+              <CreatableSelect
+                isMulti
+                className="mb-3"
+                options={sizeOptions}
+                onChange={(selectedOptions) => {
+                  // Extract the selected size values
+                  const selectedSizes = selectedOptions.map(
+                    (option) => option.value
+                  );
+
+                  setSizes(selectedSizes);
+                }}
+                placeholder="Please Select a Size"
+              />
+              {/* brand */}
+              <CreatableSelect
+                isClearable
+                options={brandOptions}
+                className="mb-3"
+                onChange={(newValue) => {
+                  setBrand(newValue.value);
+                }}
+                placeholder="Please Select a Brand"
+              />
+
               <div className="mb-3">
                 <input
                   type="text"
@@ -145,29 +190,51 @@ const CreateProduct = () => {
                   onChange={(e) => setPrice(e.target.value)}
                 />
               </div>
+
               <div className="mb-3">
-                <input
-                  type="number"
-                  value={quantity}
-                  placeholder="Write a quantity"
-                  className="form-control"
-                  onChange={(e) => setQuantity(e.target.value)}
+                <CreatableSelect
+                  options={options}
+                  placeholder="Shipped"
+                  onChange={(value) => {
+                    setShipping(value.value);
+                  }}
                 />
               </div>
               <div className="mb-3">
-                <Select
-                  bordered={false}
-                  placeholder="Select Shipping "
-                  size="large"
-                  showSearch
-                  className="form-select mb-3"
+                <CreatableSelect
+                  options={options}
+                  placeholder="isAvailable"
                   onChange={(value) => {
-                    setShipping(value);
+                    setIsAvailable(value.value);
                   }}
+                />
+              </div>
+              <div className="mb-3">
+                <label
+                  className="
+                  btn btn-outline-secondary col-md-12"
                 >
-                  <Select.Option value="0">No</Select.Option>
-                  <Select.Option value="1">Yes</Select.Option>
-                </Select>
+                  {photo ? photo.name : " Upload Photo "}
+                  <input
+                    type="file"
+                    name="photo"
+                    accept="image/*"
+                    onChange={(e) => setPhoto(e.target.files[0])}
+                    hidden
+                  />
+                </label>
+              </div>
+              <div className="mb-3">
+                {photo && (
+                  <div className="text-center">
+                    <img
+                      src={URL.createObjectURL(photo)}
+                      alt={photo.name}
+                      height={"200px"}
+                      className="img img-responsive"
+                    />
+                  </div>
+                )}
               </div>
               <div className="mb-3">
                 <button className="btn btn-primary" onClick={handleCreate}>

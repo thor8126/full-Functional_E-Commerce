@@ -9,10 +9,16 @@ const productschema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    brand: {
+      type: String,
+      required: true,
+    },
     description: {
       type: String,
       required: true,
     },
+    size: [String],
+    colors: [String],
     price: {
       type: Number,
       required: true,
@@ -22,16 +28,16 @@ const productschema = new mongoose.Schema(
       ref: "Category",
       required: true,
     },
-    quantity: {
-      type: Number,
-      required: true,
-    },
     photo: {
       data: Buffer,
       contentType: String,
     },
     shipping: {
       type: Boolean,
+    },
+    isAvailable: {
+      type: Boolean,
+      default: true,
     },
   },
   { timestamps: true }

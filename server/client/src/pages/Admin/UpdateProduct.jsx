@@ -3,9 +3,10 @@ import Layout from "../../components/layout/Layout";
 import AdminMenu from "../../components/layout/AdminMenu/AdminMenu";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { Select } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import DeletePrompt from "../../components/DeletePrompt";
+import { ShoeColor, ShoeSize, brands } from "../../components/material";
+import CreatableSelect from "react-select/creatable";
 
 const UpdateProduct = () => {
   const navigate = useNavigate();
@@ -15,12 +16,43 @@ const UpdateProduct = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
-  const [quantity, setQuantity] = useState("");
   const [shipping, setShipping] = useState("");
+  const [sizes, setSizes] = useState([]);
+  const [colors, setColors] = useState([]);
+  const [brand, setBrand] = useState("");
+  const [isAvailable, setIsAvailable] = useState("false");
   const [id, setId] = useState("");
   const params = useParams("");
   // this is for deleteConfomation
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+  const categoryOptions = categories?.map((category) => ({
+    label: category.name,
+    value: category.name,
+    id: category._id,
+  }));
+
+  const colorOptions = ShoeColor.map((color, index) => ({
+    label: color,
+    value: color,
+    id: index, // You can use an appropriate unique identifier
+  }));
+
+  const sizeOptions = ShoeSize.map((size, index) => ({
+    label: size,
+    value: size,
+    id: index, // You can use an appropriate unique identifier
+  }));
+
+  const brandOptions = brands.map((brand, index) => ({
+    label: brand,
+    value: brand,
+    id: index, // You can use an appropriate unique identifier
+  }));
+  // for availabe or not
+  const options = [
+    { value: "yes", label: "Yes" },
+    { value: "no", label: "No" },
+  ];
 
   // get single product
   const getSingleProuct = async () => {
@@ -34,10 +66,15 @@ const UpdateProduct = () => {
         setName(data?.product.name);
         setDescription(data?.product?.description);
         setPrice(data?.product?.price);
-        setQuantity(data?.product?.quantity);
-        setShipping(data?.product?.shipping);
         setCategory(data?.product?.category?._id);
+        setBrand(data?.product?.category?._id);
+        setSizes(JSON.parse(data?.product?.size));
+        setColors(JSON.parse(data?.product?.colors));
+        setShipping(data?.product?.shipping);
+        setBrand(data?.product?.brand);
+        setIsAvailable(data?.product?.isAvailable);
         setId(data?.product._id);
+        console.log(brand);
       }
     } catch (error) {
       console.log(error);
@@ -70,16 +107,23 @@ const UpdateProduct = () => {
 
   // create product function
   const handleUpdate = async (e) => {
+    console.log(category);
     e.preventDefault();
     try {
+      const sizeValues = sizes.map((size) => size);
+      const colorValues = colors.map((color) => color);
       const productData = new FormData();
       productData.append("name", name);
       productData.append("description", description);
       productData.append("price", price);
-      productData.append("quantity", quantity);
       photo && productData.append("photo", photo);
       productData.append("category", category);
-      productData.append("shipping", shipping);
+      productData.append("brand", brand);
+      productData.append("size", JSON.stringify(sizeValues));
+      productData.append("colors", JSON.stringify(colorValues));
+      productData.append("shipping", shipping === "yes" ? true : false);
+      productData.append("isAvailable", isAvailable === "yes" ? true : false);
+      console.log(productData);
       const { data } = await axios.put(
         `${import.meta.env.VITE_APP_API}/api/v1/product/update-product/${id}`,
         productData
@@ -125,7 +169,7 @@ const UpdateProduct = () => {
   };
 
   return (
-    <Layout title={"DashBoard - Create Product"}>
+    <Layout title={"DashBoard - Update Product"}>
       <div className="container-fluid m-3 p-3">
         <div className="row">
           <div className="col-md-3">
@@ -134,61 +178,57 @@ const UpdateProduct = () => {
           <div className="col-md-9">
             <h1>Update Product</h1>
             <div className="m-1 w-75">
-              <Select
-                bordered={false}
-                placeholder="Select a category"
-                size="large"
-                showSearch
-                className="form-select mb-3"
-                onChange={(value) => {
-                  setCategory(value);
+              <CreatableSelect
+                isClearable
+                options={categoryOptions}
+                className="mb-3"
+                onChange={(newValue) => {
+                  setCategory(newValue.id);
                 }}
-                value={category}
-              >
-                {categories?.map((c) => (
-                  <Select.Option key={c._id} value={c._id}>
-                    {c.name}
-                  </Select.Option>
-                ))}
-              </Select>
-              <div className="mb-3">
-                <label
-                  className="
-                btn btn-outline-secondary col-md-12"
-                >
-                  {photo ? photo.name : " Upload Photo "}
-                  <input
-                    type="file"
-                    name="photo"
-                    accept="image/*"
-                    onChange={(e) => setPhoto(e.target.files[0])}
-                    hidden
-                  />
-                </label>
-              </div>
-              <div className="mb-3">
-                {photo ? (
-                  <div className="text-center">
-                    <img
-                      src={URL.createObjectURL(photo)}
-                      alt={photo.name}
-                      height={"200px"}
-                      className="img img-responsive"
-                    />
-                  </div>
-                ) : (
-                  <div className="text-center">
-                    <img
-                      src={`${
-                        import.meta.env.VITE_APP_API
-                      }/api/v1/product/product-photo/${id}`}
-                      alt={photo.name}
-                      height={"200px"}
-                      className="img img-responsive"
-                    />
-                  </div>
-                )}
-              </div>
+                value={categoryOptions.find((option) => option.id === category)}
+              />
+
+              {/* size */}
+              <CreatableSelect
+                isMulti
+                className="mb-3"
+                options={colorOptions}
+                onChange={(selectedOptions) => {
+                  // Extract the selected color values
+                  const selectedColors = selectedOptions.map(
+                    (option) => option.value
+                  );
+                  setColors(selectedColors);
+                }}
+                value={colors.map((color) => ({ label: color, value: color }))}
+                x
+              />
+
+              {/* colors */}
+              <CreatableSelect
+                isMulti
+                className="mb-3"
+                options={sizeOptions}
+                onChange={(selectedOptions) => {
+                  // Extract the selected size values
+                  const selectedSizes = selectedOptions.map(
+                    (option) => option.value
+                  );
+                  setSizes(selectedSizes);
+                }}
+                value={sizes.map((size) => ({ label: size, value: size }))}
+              />
+
+              {/* brand */}
+              <CreatableSelect
+                isClearable
+                options={brandOptions}
+                className="mb-3"
+                onChange={(newValue) => {
+                  setBrand(newValue ? newValue.value : null);
+                }}
+                value={brand ? { label: brand, value: brand } : null}
+              />
               <div className="mb-3">
                 <input
                   type="text"
@@ -198,6 +238,7 @@ const UpdateProduct = () => {
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
+
               <div className="mb-3">
                 <textarea
                   type="text"
@@ -207,6 +248,7 @@ const UpdateProduct = () => {
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
+
               <div className="mb-3">
                 <input
                   type="number"
@@ -216,45 +258,91 @@ const UpdateProduct = () => {
                   onChange={(e) => setPrice(e.target.value)}
                 />
               </div>
+
               <div className="mb-3">
-                <input
-                  type="number"
-                  value={quantity}
-                  placeholder="Write a quantity"
-                  className="form-control"
-                  onChange={(e) => setQuantity(e.target.value)}
-                />
-              </div>
-              <div className="mb-3">
-                <Select
-                  bordered={false}
-                  placeholder="Select Shipping "
-                  size="large"
-                  showSearch
-                  className="form-select mb-3"
+                <CreatableSelect
+                  options={options}
+                  placeholder="Shipped"
                   onChange={(value) => {
-                    setShipping(value);
+                    setShipping(value.value);
                   }}
-                  value={shipping ? "yes" : "No"}
-                >
-                  <Select.Option value="0">No</Select.Option>
-                  <Select.Option value="1">Yes</Select.Option>
-                </Select>
-              </div>
-              <div className="mb-3 d-flex flex-row">
-                <button className="btn btn-primary m-1" onClick={handleUpdate}>
-                  Update Product
-                </button>
-                <button className="btn btn-danger m-1" onClick={handleDelete}>
-                  Delete Product
-                </button>
-              </div>
-              {showDeleteConfirmation && (
-                <DeletePrompt
-                  onConfirm={handleConfirmDelete}
-                  onCancel={handleCancelDelete}
+                  value={
+                    shipping === "yes"
+                      ? { label: "yes", value: "yes" }
+                      : { label: "no", value: "no" }
+                  }
                 />
-              )}
+
+                <div className="mb-3 mt-3">
+                  <CreatableSelect
+                    options={options}
+                    placeholder="isAvailable"
+                    onChange={(value) => {
+                      setIsAvailable(value ? value.value : null);
+                    }}
+                    value={
+                      isAvailable === "yes"
+                        ? { label: "yes", value: "yes" }
+                        : { label: "no", value: "no" }
+                    }
+                  />
+                </div>
+                <div className="mb-3">
+                  <label
+                    className="
+                btn btn-outline-secondary col-md-12"
+                  >
+                    {photo ? photo.name : " Upload Photo "}
+                    <input
+                      type="file"
+                      name="photo"
+                      accept="image/*"
+                      onChange={(e) => setPhoto(e.target.files[0])}
+                      hidden
+                    />
+                  </label>
+                </div>
+                <div className="mb-3">
+                  {photo ? (
+                    <div className="text-center">
+                      <img
+                        src={URL.createObjectURL(photo)}
+                        alt={photo.name}
+                        height={"200px"}
+                        className="img img-responsive"
+                      />
+                    </div>
+                  ) : (
+                    <div className="text-center">
+                      <img
+                        src={`${
+                          import.meta.env.VITE_APP_API
+                        }/api/v1/product/product-photo/${id}`}
+                        alt={photo.name}
+                        height={"200px"}
+                        className="img img-responsive"
+                      />
+                    </div>
+                  )}
+                </div>
+                <div className="mb-3 d-flex flex-row">
+                  <button
+                    className="btn btn-primary m-1"
+                    onClick={handleUpdate}
+                  >
+                    Update Product
+                  </button>
+                  <button className="btn btn-danger m-1" onClick={handleDelete}>
+                    Delete Product
+                  </button>
+                </div>
+                {showDeleteConfirmation && (
+                  <DeletePrompt
+                    onConfirm={handleConfirmDelete}
+                    onCancel={handleCancelDelete}
+                  />
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -262,5 +350,4 @@ const UpdateProduct = () => {
     </Layout>
   );
 };
-
 export default UpdateProduct;

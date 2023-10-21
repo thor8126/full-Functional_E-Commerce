@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../components/layout/Layout";
 import axios from "axios";
-import { Checkbox, Radio } from "antd";
-import { Prices } from "../components/Prices";
-import { useNavigate } from "react-router-dom";
+import { Checkbox } from "antd";
+import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/Cart";
 import toast from "react-hot-toast";
 import { Box } from "@mui/material";
 import { Slider } from "@mui/material";
+import HomeIntro from "../components/layout/HomeIntro";
 function HomePage() {
   const [cart, setCart] = useCart();
   const [products, setProducts] = useState([]);
@@ -110,9 +110,8 @@ function HomePage() {
     try {
       const { data } = await axios.post(
         `${import.meta.env.VITE_APP_API}/api/v1/product/product-filters`,
-        { value }
+        { checked, value }
       );
-      console.log(data?.products);
       setProducts(data?.products);
     } catch (error) {
       console.log(error.message);
@@ -150,6 +149,7 @@ function HomePage() {
 
   return (
     <Layout title={"All Products - Best Offers"}>
+        <HomeIntro />
       <div className="row mt-3">
         <div className="col-md-3">
           <h4 className="text-center">Fileter by categorty</h4>
@@ -159,37 +159,40 @@ function HomePage() {
                 key={c._id}
                 onChange={(e) => handleFilter(e.target.checked, c._id)}
               >
-                {c.name}
+                <h6>{c.name}</h6>
               </Checkbox>
             ))}
           </div>
           {/* price filter */}
           <h4 className="text-center mt-4">Fileter by Prices</h4>
           <div className="container">
-            <div className="d-flex justify-content-between">
-              <div>Low: ${value[0]}</div>
-              <div>High: ${value[1]}</div>
-            </div>
-            <Box sx={{ width: 300 }}>
-              <Slider
-                value={value}
-                onChange={handleChange}
-                valueLabelDisplay="auto"
-                valueLabelFormat={valuetext} // Use the valuetext function to format the label
-                min={0}
-                max={1000}
-                size="big"
-                sx={{
-                  "& .MuiSlider-valueLabel": {
-                    borderRadius: "50%", // Adjust the value label border-radius
-                    padding: "4px", // Adjust the padding for value label
-                    fontSize: "15px",
-                  },
-                }}
-              />
+            <Box sx={{ width: 300 }} className="w-100">
+              <div className="d-flex flex-row  justify-align-align-content-between">
+                <>
+                  <p className="me-3 fw-bold">Low: ${value[0]}</p>
+                  <Slider
+                    className="me-3"
+                    value={value}
+                    onChange={handleChange}
+                    valueLabelDisplay="auto"
+                    valueLabelFormat={valuetext} // Use the valuetext function to format the label
+                    min={0}
+                    max={1000}
+                    size="big"
+                    sx={{
+                      "& .MuiSlider-valueLabel": {
+                        borderRadius: "50%", // Adjust the value label border-radius
+                        padding: "4px", // Adjust the padding for value label
+                        fontSize: "15px",
+                      },
+                    }}
+                  />
+                  <p className="fw-bold">High: ${value[1]}</p>
+                </>
+              </div>
             </Box>
           </div>
-          <div className="d-flex flex-column m-2 w-50">
+          <div className="d-flex flex-column m-2 w-75">
             <button
               type="button"
               className="btn btn-primary flex-fill me-1 w-75"
@@ -220,9 +223,9 @@ function HomePage() {
                   <div className="card-body">
                     <div className="d-flex justify-content-between">
                       <p className="small">
-                        <a href="#!" className="text-muted">
+                        <Link to="%" className="text-muted">
                           {p.category.name}
-                        </a>
+                        </Link>
                       </p>
                       <p className="small text-danger">
                         <s>${p.price + p.price * 0.5}</s>

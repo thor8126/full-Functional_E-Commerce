@@ -1,9 +1,10 @@
-import express, { urlencoded } from "express";
+import express from "express";
 import { config } from "dotenv";
 import morgan from "morgan";
 import authRoutes from "./routes/authRoute.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
+import bodyParser from "body-parser";
 import cors from "cors";
 // configure .env file
 config({
@@ -17,6 +18,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
+app.use(bodyParser.json());
 
 // routes
 app.use("/api/v1/auth", authRoutes);
