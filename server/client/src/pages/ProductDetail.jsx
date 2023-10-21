@@ -3,7 +3,10 @@ import Layout from "../components/layout/Layout";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import { useCart } from "../context/Cart";
+import toast from "react-hot-toast";
 const ProductDetail = () => {
+  const [cart, setCart] = useCart();
   const params = useParams();
   const [product, setProduct] = useState({});
   const [relatedProduts, setRelatedProduts] = useState([]);
@@ -94,7 +97,15 @@ const ProductDetail = () => {
             )}
           </div>
 
-          <button type="button" className="btn btn-secondary flex-fill ms-1">
+          <button
+            type="button"
+            className="btn btn-secondary flex-fill ms-1"
+            onClick={() => {
+              setCart([...cart, product]);
+              localStorage.setItem("cart", JSON.stringify([...cart, product]));
+              toast.success("item added To Cart");
+            }}
+          >
             Add To Cart
           </button>
         </div>
@@ -151,6 +162,14 @@ const ProductDetail = () => {
                     <button
                       type="button"
                       className="btn btn-secondary flex-fill ms-1"
+                      onClick={() => {
+                        setCart([...cart, p]);
+                        localStorage.setItem(
+                          "cart",
+                          JSON.stringify([...cart, p])
+                        );
+                        toast.success("item added To Cart");
+                      }}
                     >
                       Add To Cart
                     </button>

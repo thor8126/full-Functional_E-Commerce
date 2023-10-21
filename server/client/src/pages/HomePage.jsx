@@ -3,14 +3,12 @@ import Layout from "../components/layout/Layout";
 import axios from "axios";
 import { Checkbox } from "antd";
 import { useNavigate } from "react-router-dom";
-import { useCart } from "../context/Cart";
 import toast from "react-hot-toast";
 import { Box } from "@mui/material";
 import { Slider } from "@mui/material";
 import HomeIntro from "../components/layout/HomeIntro";
 import Card from "../components/Card";
 function HomePage() {
-  const [cart, setCart] = useCart();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [checked, setChecked] = useState([]);
@@ -240,66 +238,3 @@ function HomePage() {
 }
 
 export default HomePage;
-
-{
-  /* <div className="mb-4 mx-3 " key={p._id}>
-                <div className="card mb-2" style={{ width: "18rem" }}>
-                  <div className="d-flex justify-content-between p-3">
-                    <p className="lead mb-0">{p.name}</p>
-                  </div>
-                  <img
-                    src={`${
-                      import.meta.env.VITE_APP_API
-                    }/api/v1/product/product-photo/${p._id}`}
-                    className="card-img-top rounded-3"
-                    alt={p.name}
-                    height={"270px"}
-                  />
-                  <div className="card-body">
-                    <div className="d-flex justify-content-between">
-                      <p className="small">
-                        <Link to="%" className="text-muted">
-                          {p.category.name}
-                        </Link>
-                      </p>
-                      <p className="small text-danger">
-                        <s>${p.price + p.price * 0.5}</s>
-                      </p>
-                    </div>
-                    <div className="d-flex justify-content-between mb-3">
-                      <h5 className="mb-0">{p.description}</h5>
-                      <h5 className="text-dark mb-0">${p.price}</h5>
-                    </div>
-                    <div className="d-flex justify-content-between mb-2">
-                      <p className="text-muted mb-0">
-                        Available: <span className="fw-bold">{p.quantity}</span>
-                      </p>
-                    </div>
-                    <div className="d-flex flex-row">
-                      <button
-                        type="button"
-                        className="btn btn-primary flex-fill me-1"
-                        data-mdb-ripple-color="dark"
-                        onClick={() => navigate(`/product/${p.slug}`)}
-                      >
-                        More Details
-                      </button>
-                      <button
-                        type="button"
-                        className="btn btn-secondary flex-fill ms-1"
-                        onClick={() => {
-                          setCart([...cart, p]);
-                          localStorage.setItem(
-                            "cart",
-                            JSON.stringify([...cart, p])
-                          );
-                          toast.success("item added To Cart");
-                        }}
-                      >
-                        Add To Cart
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div> */
-}

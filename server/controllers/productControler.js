@@ -325,6 +325,8 @@ export const searchProductController = async (req, res) => {
         $or: [
           { name: { $regex: keyword, $options: "i" } },
           { description: { $regex: keyword, $options: "i" } },
+          { brands: { $elemMatch: { $regex: keyword, $options: "i" } } },
+          { colors: { $elemMatch: { $regex: keyword, $options: "i" } } },
         ],
       })
       .select("-photo")

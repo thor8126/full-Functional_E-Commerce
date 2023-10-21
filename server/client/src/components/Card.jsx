@@ -1,12 +1,11 @@
 import React from "react";
-import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/Cart";
+import toast from "react-hot-toast";
 const Card = ({ p }) => {
-  const navigate = useNavigate();
   const [cart, setCart] = useCart();
+  const navigate = useNavigate();
   const Size = JSON.parse(p.size);
-  const Colors = JSON.parse(p.colors);
   return (
     <div className="mb-4 mx-3 " key={p._id}>
       <div className="card mb-2" style={{ width: "18rem" }}>
