@@ -42,7 +42,7 @@ const ProductDetail = () => {
   };
   return (
     <Layout>
-      <div className="row container mt-2">
+      <div className="row container mt-5">
         <div className="col-md-5">
           <img
             src={`${
@@ -52,13 +52,48 @@ const ProductDetail = () => {
             alt={product.name}
           />
         </div>
-        <div className="col-md-6 x">
-          <h1 className="text-center">Product Details</h1>
-          <h6>Name : {product?.name}</h6>
-          <h6>Description : {product?.description}</h6>
-          <h6>Price : {product?.price}</h6>
-          <h6>Category : {product?.category?.name}</h6>
-          <h6>Quantity : {product?.quantity}</h6>
+        <div className="col-md-6">
+          <h1 className="text-center mb-3">Product Details</h1>
+          <div className="d-flex  ">
+            <p>Name : </p>
+            <h5> {product?.name}</h5>
+          </div>
+          <div className="d-flex  ">
+            <p>Description : </p>
+            <h5> {product?.description}</h5>
+          </div>
+          <div className="d-flex ms-1">
+            <h5 className="text-dark  fs-4">${product.price}</h5>
+            <p className="small text-secondary ms-3">
+              <s className="fs-5">${product.price + product.price * 0.5}</s>
+            </p>
+          </div>
+          <div className="d-flex ms-1">
+            <p>Category : </p>
+            <h5>{product?.category?.name}</h5>
+          </div>
+          <div className="d-flex ms-1"></div>
+          <div>
+            {product.size ? (
+              <div className="d-flex  ">
+                <p>Size: </p>
+                <h5> {JSON.parse(product.size).join(",  ")}</h5>
+              </div>
+            ) : (
+              <p>No sizes available</p>
+            )}
+          </div>
+          <div>
+            {product.colors ? (
+              <div className="d-flex  ">
+                <p>Size: </p>
+                <h5> {JSON.parse(product.colors).join(",  ")}</h5>
+              </div>
+            ) : (
+              <p>No sizes available</p>
+            )}
+          </div>
+
           <button type="button" className="btn btn-secondary flex-fill ms-1">
             Add To Cart
           </button>

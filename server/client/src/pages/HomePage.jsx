@@ -2,18 +2,18 @@ import React, { useEffect, useState } from "react";
 import Layout from "../components/layout/Layout";
 import axios from "axios";
 import { Checkbox } from "antd";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/Cart";
 import toast from "react-hot-toast";
 import { Box } from "@mui/material";
 import { Slider } from "@mui/material";
 import HomeIntro from "../components/layout/HomeIntro";
+import Card from "../components/Card";
 function HomePage() {
   const [cart, setCart] = useCart();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [checked, setChecked] = useState([]);
-  const [radio, setRadio] = useState([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState();
@@ -59,8 +59,10 @@ function HomePage() {
   };
   // lifecycle method
   useEffect(() => {
-    if (!checked.length || !radio.length) getAllProucts();
-  }, [checked.length, radio.length]);
+    if (checked.length === 0 && value[0] === 0 && value[1] === 1000) {
+      getAllProucts();
+    }
+  }, [checked, value]);
 
   // getTotal count
   const getTotal = async () => {
@@ -105,13 +107,19 @@ function HomePage() {
     setChecked(all);
   };
 
+  useEffect(() => {
+    filterProducts();
+  }, [checked]);
+
   // const filter products
   const filterProducts = async (req, res) => {
     try {
+      setLoading(true);
       const { data } = await axios.post(
         `${import.meta.env.VITE_APP_API}/api/v1/product/product-filters`,
         { checked, value }
       );
+      setLoading(false);
       setProducts(data?.products);
     } catch (error) {
       console.log(error.message);
@@ -149,7 +157,7 @@ function HomePage() {
 
   return (
     <Layout title={"All Products - Best Offers"}>
-        <HomeIntro />
+      <HomeIntro />
       <div className="row mt-3">
         <div className="col-md-3">
           <h4 className="text-center">Fileter by categorty</h4>
@@ -163,6 +171,7 @@ function HomePage() {
               </Checkbox>
             ))}
           </div>
+
           {/* price filter */}
           <h4 className="text-center mt-4">Fileter by Prices</h4>
           <div className="container">
@@ -181,7 +190,7 @@ function HomePage() {
                     size="big"
                     sx={{
                       "& .MuiSlider-valueLabel": {
-                        borderRadius: "50%", // Adjust the value label border-radius
+                        borderRadius: "50%", // Adjust the label border-radius
                         padding: "4px", // Adjust the padding for value label
                         fontSize: "15px",
                       },
@@ -192,6 +201,7 @@ function HomePage() {
               </div>
             </Box>
           </div>
+
           <div className="d-flex flex-column m-2 w-75">
             <button
               type="button"
@@ -207,7 +217,32 @@ function HomePage() {
           <h1 className="text-center">All Products</h1>
           <div className="d-flex flex-wrap justify-content-around">
             {products?.map((p) => (
-              <div className="mb-4 mx-3 " key={p._id}>
+              <Card p={p} key={p._id} />
+            ))}
+          </div>
+          <div className="m-2 p-3">
+            {products && products.length > 0 && products.length < total && (
+              <button
+                className="btn btn-warning"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setPage(page + 1);
+                }}
+              >
+                Load More
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    </Layout>
+  );
+}
+
+export default HomePage;
+
+{
+  /* <div className="mb-4 mx-3 " key={p._id}>
                 <div className="card mb-2" style={{ width: "18rem" }}>
                   <div className="d-flex justify-content-between p-3">
                     <p className="lead mb-0">{p.name}</p>
@@ -266,26 +301,5 @@ function HomePage() {
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-          <div className="m-2 p-3">
-            {products && products.length > 0 && products.length < total && (
-              <button
-                className="btn btn-warning"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setPage(page + 1);
-                }}
-              >
-                Load More
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-    </Layout>
-  );
+              </div> */
 }
-
-export default HomePage;

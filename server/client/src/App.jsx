@@ -35,6 +35,7 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/category/:slug" element={<CategoryProducts />} />
           <Route path="/search" element={<Search />} />
+          
           <Route path="/dashboard" element={<PrivateRoute />}>
             <Route path="user" element={<DashBoard />} />
             <Route path="user/orders" element={<Orders />} />

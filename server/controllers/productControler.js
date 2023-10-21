@@ -248,6 +248,7 @@ export const updateProductController = async (req, res) => {
 export const productFiltersController = async (req, res) => {
   try {
     const { checked, value } = req.body;
+    console.log(checked);
     let args = {};
     if (checked.length > 0) args.category = checked;
     if (value.length) args.price = { $gte: value[0], $lte: value[1] };
