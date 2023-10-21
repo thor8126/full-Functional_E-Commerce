@@ -102,7 +102,7 @@ const ProductDetail = () => {
       <div className="row text-center container-fluid mt-5">
         <h3 className="mb-5">similar products</h3>
         {relatedProduts.length < 1 && (
-          <p className="text-center">No Similar Products</p>
+          <h5 className="text-center">No Similar Products</h5>
         )}
         <div className="d-flex flex-wrap justify-content-around ">
           {relatedProduts?.map((p) => (
