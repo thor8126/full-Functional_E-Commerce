@@ -5,7 +5,13 @@ import toast from "react-hot-toast";
 const Card = ({ p }) => {
   const [cart, setCart] = useCart();
   const navigate = useNavigate();
-  const Size = JSON.parse(p.size);
+  let size = p.size;
+  if (size) {
+    size = size.replace(/"/g, "");
+    size = size.split("-");
+  } else {
+    console.error("Error parsing size:", error);
+  }
   return (
     <div className="mb-4 mx-3 " key={p._id}>
       <div className="card mb-2" style={{ width: "18rem" }}>
@@ -20,9 +26,7 @@ const Card = ({ p }) => {
         <div className="card-body">
           <div className="d-flex justify-content-between">
             <p className="small">
-              <Link to="%" className="text-muted">
                 {p.brand}
-              </Link>
             </p>
           </div>
           <div className="d-flex mb-3 ms-1">
@@ -33,23 +37,30 @@ const Card = ({ p }) => {
           </div>
 
           <div>
-            <div>
-              {p.size ? (
-                <p>Size: {Size.join(", ")}</p>
-              ) : (
-                <p>No sizes available</p>
-              )}
-            </div>
+            {size.length > 0 ? (
+              <p>Size: {size.join(", ")}</p>
+            ) : (
+              <p>No sizes available</p>
+            )}
           </div>
+
           <div className="d-flex flex-row">
-            <button
+            {/* <button
               type="button"
               className="btn btn-primary flex-fill me-1"
               data-mdb-ripple-color="dark"
-              onClick={() => navigate(`/product/${p.slug}`)}
+              // onClick={() => navigate(`/product/${p.slug}`)}
             >
               More Details
-            </button>
+            </button> */}
+            <Link
+              to={`/product/${p.slug}`}
+              className="btn btn-primary flex-fill me-1"
+              data-mdb-ripple-color="dark"
+            >
+              More Details
+            </Link>
+
             <button
               type="button"
               className="btn btn-secondary flex-fill ms-1"

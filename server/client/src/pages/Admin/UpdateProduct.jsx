@@ -68,13 +68,20 @@ const UpdateProduct = () => {
         setPrice(data?.product?.price);
         setCategory(data?.product?.category?._id);
         setBrand(data?.product?.category?._id);
-        setSizes(JSON.parse(data?.product?.size));
-        setColors(JSON.parse(data?.product?.colors));
         setShipping(data?.product?.shipping);
         setBrand(data?.product?.brand);
         setIsAvailable(data?.product?.isAvailable);
         setId(data?.product._id);
-        console.log(brand);
+        let Color = data?.product?.colors;
+        if (Color) {
+          Color = Color.replace(/"/g, "");
+          setColors(Color.split("-"));
+        }
+        let Size = data?.product?.size;
+        if (Size) {
+          Size = Size.replace(/"/g, "");
+          setSizes(Size.split("-"));
+        }
       }
     } catch (error) {
       console.log(error);
@@ -110,8 +117,10 @@ const UpdateProduct = () => {
     console.log(category);
     e.preventDefault();
     try {
-      const sizeValues = sizes.map((size) => size);
-      const colorValues = colors.map((color) => color);
+      const formattedColorsString = colors
+        .map((color) => `"${color}"`)
+        .join("-");
+      const formattedSizeString = sizes.map((s) => `"${s}"`).join("-");
       const productData = new FormData();
       productData.append("name", name);
       productData.append("description", description);
@@ -119,8 +128,8 @@ const UpdateProduct = () => {
       photo && productData.append("photo", photo);
       productData.append("category", category);
       productData.append("brand", brand);
-      productData.append("size", JSON.stringify(sizeValues));
-      productData.append("colors", JSON.stringify(colorValues));
+      productData.append("size", formattedSizeString);
+      productData.append("colors", formattedColorsString);
       productData.append("shipping", shipping === "yes" ? true : false);
       productData.append("isAvailable", isAvailable === "yes" ? true : false);
       console.log(productData);
@@ -188,7 +197,7 @@ const UpdateProduct = () => {
                 value={categoryOptions.find((option) => option.id === category)}
               />
 
-              {/* size */}
+              {/* colors */}
               <CreatableSelect
                 isMulti
                 className="mb-3"
@@ -204,7 +213,7 @@ const UpdateProduct = () => {
                 x
               />
 
-              {/* colors */}
+              {/* sizes */}
               <CreatableSelect
                 isMulti
                 className="mb-3"

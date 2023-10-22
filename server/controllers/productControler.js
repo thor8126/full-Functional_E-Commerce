@@ -19,10 +19,17 @@ const gateway = new braintree.BraintreeGateway({
 // creating a new Product
 export const createProductController = async (req, res, next) => {
   try {
-    const { name, description, price, category, shipping, brand, isAvailable } =
-      req.fields;
-    const size = JSON.parse(req.fields.size);
-    const colors = JSON.parse(req.fields.colors);
+    const {
+      name,
+      description,
+      price,
+      colors,
+      category,
+      shipping,
+      brand,
+      size,
+      isAvailable,
+    } = req.fields;
 
     const { photo } = req.files;
     let keys = [
@@ -164,11 +171,17 @@ export const deleteProductController = async (req, res) => {
 // update product conroler
 export const updateProductController = async (req, res) => {
   try {
-    const { name, description, price, category, shipping, brand, isAvailable } =
-      req.fields;
-    console.log(category);
-    const size = JSON.parse(req.fields.size);
-    const colors = JSON.parse(req.fields.colors);
+    const {
+      name,
+      description,
+      price,
+      category,
+      colors,
+      shipping,
+      brand,
+      size,
+      isAvailable,
+    } = req.fields;
     const { photo } = req.files;
     let keys = [
       "name",
@@ -247,19 +260,55 @@ export const updateProductController = async (req, res) => {
 // filter products
 export const productFiltersController = async (req, res) => {
   try {
-    const { checked, value } = req.body;
-    console.log(checked);
-    let args = {};
-    if (checked.length > 0) args.category = checked;
-    if (value.length) args.price = { $gte: value[0], $lte: value[1] };
+    const { brand, value, checked, colors, size } = req.body;
+
+    const filter = {};
+
+    // Check if any categories are selected
+    if (checked && checked.length > 0) {
+      filter.category = { $in: checked };
+    }
+
+    // Check if price range is specified
+    if (value && value.length === 2) {
+      filter.price = { $gte: value[0], $lte: value[1] };
+    }
+
+    // Check if brands are selected
+    if (brand && brand.length > 0) {
+      filter.brand = { $in: brand };
+    }
+    // Check if colors are specified
+    if (colors && colors.length > 0) {
+      // Combine the $or conditions using $or
+      const colorArray = colors.split("-").map((color) => color.trim());
+
+      // Create an array of $or conditions for each color
+      const colorConditions = colorArray.map((color) => ({
+        colors: { $regex: color, $options: "i" },
+      }));
+
+      // Combine the $or conditions using $or
+      filter.$or = colorConditions;
+    }
+
+    if (size) {
+      const sizeArray = size.split("-").map((s) => s.trim());
+      const sizeRegex = sizeArray.map((s) => new RegExp(`\\b${s}\\b`, "i"));
+      filter.size = { $in: sizeRegex };
+    }
+
+    // Query the database with the constructed filter
     const products = await productModel
-      .find(args)
+      .find(filter)
       .select("-photo")
       .populate("category")
       .limit(12)
       .sort({ createdAt: -1 });
+
     res.status(200).send({
       success: true,
+      length: products.length,
       products,
     });
   } catch (error) {
@@ -325,8 +374,8 @@ export const searchProductController = async (req, res) => {
         $or: [
           { name: { $regex: keyword, $options: "i" } },
           { description: { $regex: keyword, $options: "i" } },
-          { brands: { $elemMatch: { $regex: keyword, $options: "i" } } },
-          { colors: { $elemMatch: { $regex: keyword, $options: "i" } } },
+          { brand: { $regex: keyword, $options: "i" } },
+          { colors: { $regex: keyword, $options: "i" } },
         ],
       })
       .select("-photo")

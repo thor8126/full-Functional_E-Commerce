@@ -34,8 +34,8 @@ const CreateProduct = () => {
   }));
 
   const sizeOptions = ShoeSize.map((size, index) => ({
-    label: size.toString(),
-    value: size,
+    label: size,
+    value: size.toString(),
     id: index, 
   }));
   const brandOptions = brands.map((brand, index) => ({
@@ -71,8 +71,10 @@ const CreateProduct = () => {
   const handleCreate = async (e) => {
     e.preventDefault();
     try {
-      const sizeValues = sizes.map((size) => size);
-      const colorValues = colors.map((color) => color);
+      const formattedColorsString = colors.map(color => `"${color}"`).join("-");
+      const formattedSizeString = sizes.map(s => `"${s}"`).join("-");
+      console.log(formattedSizeString);
+      // const formattedSize = sizes.join('-');
       const productData = new FormData();
       productData.append("name", name);
       productData.append("description", description);
@@ -80,8 +82,8 @@ const CreateProduct = () => {
       productData.append("photo", photo);
       productData.append("category", category.id);
       productData.append("brand", brand);
-      productData.append("size", JSON.stringify(sizeValues));
-      productData.append("colors", JSON.stringify(colorValues));
+      productData.append("size", formattedSizeString);
+      productData.append("colors", formattedColorsString);
 
       productData.append("shipping", shipping === "yes" ? true : false);
       productData.append("isAvailable", isAvailable === "yes" ? true : false);

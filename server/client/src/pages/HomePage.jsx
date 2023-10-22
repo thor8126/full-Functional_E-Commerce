@@ -8,6 +8,9 @@ import { Box } from "@mui/material";
 import { Slider } from "@mui/material";
 import HomeIntro from "../components/layout/HomeIntro";
 import Card from "../components/Card";
+import { ShoeSize, ShoeColor, brands } from "../components/material";
+import CreatableSelect from "react-select/creatable";
+
 function HomePage() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -18,7 +21,27 @@ function HomePage() {
   const navigate = useNavigate();
   const [value, setValue] = React.useState([0, 1000]);
   const [filterTimeout, setFilterTimeout] = useState(null);
+  const [size, setSize] = useState([]);
+  const [colors, setColors] = useState([]);
+  const [brand, setBrand] = useState([]);
 
+  const sizeOptions = ShoeSize.map((size, index) => ({
+    label: size,
+    value: size,
+    id: index,
+  }));
+
+  const colorOptions = ShoeColor.map((color, index) => ({
+    label: color,
+    value: color,
+    id: index,
+  }));
+
+  const brandOptions = brands.map((brand, index) => ({
+    label: brand,
+    value: brand,
+    id: index,
+  }));
   // get all categories
   const getAllCategory = async () => {
     try {
@@ -107,15 +130,22 @@ function HomePage() {
 
   useEffect(() => {
     filterProducts();
-  }, [checked]);
+  }, [checked, size, colors, brand]);
 
   // const filter products
-  const filterProducts = async (req, res) => {
+  const filterProducts = async () => {
+    const formattedColors = colors.join("-");
+    const formattedSize = size.join("-");
     try {
       setLoading(true);
       const { data } = await axios.post(
         `${import.meta.env.VITE_APP_API}/api/v1/product/product-filters`,
-        { checked, value }
+        { checked, value, size: formattedSize, colors: formattedColors, brand },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
       );
       setLoading(false);
       setProducts(data?.products);
@@ -142,8 +172,8 @@ function HomePage() {
 
     // Set a new timeout to filter after 2000ms (2 seconds)
     const newFilterTimeout = setTimeout(() => {
-      filterProducts(newValue);
-    }, 2000);
+      filterProducts();
+    }, 1500);
 
     setFilterTimeout(newFilterTimeout);
   };
@@ -198,6 +228,64 @@ function HomePage() {
                 </>
               </div>
             </Box>
+          </div>
+
+          {/* {sizes} */}
+          <div className="row m-2">
+            <h4 className="text-center">Sizes</h4>
+            <CreatableSelect
+              isMulti
+              className="mb-3 "
+              options={sizeOptions}
+              onChange={(selectedOptions) => {
+                // Extract the selected size values
+                const selectedSizes = selectedOptions.map(
+                  (option) => option.value
+                );
+                setSize(selectedSizes);
+              }}
+              placeholder="Please Select a size"
+            />
+          </div>
+
+          {/* colors */}
+
+          <div className="row m-2">
+            <h4 className="text-center">Colors</h4>
+            <CreatableSelect
+              isMulti
+              className="mb-3"
+              options={colorOptions}
+              onChange={(selectedOptions) => {
+                // Extract the selected size values
+                const selectedColors = selectedOptions.map(
+                  (option) => option.value
+                );
+
+                setColors(selectedColors);
+                console.log(colors);
+              }}
+              placeholder="Please Select a color"
+            />
+          </div>
+
+          {/* brands */}
+          <div className="row m-2">
+            <h4 className="text-center">Brands</h4>
+            <CreatableSelect
+              isMulti
+              className="mb-3"
+              options={brandOptions}
+              onChange={(selectedOptions) => {
+                // Extract the selected brand values
+                const selectedBrands = selectedOptions.map(
+                  (option) => option.value
+                );
+
+                setBrand(selectedBrands); // Update selected brands
+              }}
+              placeholder="Please Select a Brand"
+            />
           </div>
 
           <div className="d-flex flex-column m-2 w-75">
