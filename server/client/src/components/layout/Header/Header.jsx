@@ -5,22 +5,35 @@ import { useAuth } from "../../../context/Auth";
 import toast from "react-hot-toast";
 import SearchInput from "../../forms/SearchInput";
 import useCategory from "../../../hooks/useCategory";
-import { useCart } from "../../../context/Cart";
 import { Badge } from "antd";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import { useCart } from "../../../context/Cart";
+import axios from "axios";
 function Header() {
   const [cart, setCart] = useCart();
   const { auth, setAuth } = useAuth();
   const categories = useCategory();
-  const handleLogOut = () => {
-    setAuth({
-      ...auth,
-      user: null,
-      token: "",
-    });
-    localStorage.removeItem("auth");
-    toast.success("LogOut Successfully");
+  const handleLogOut = async () => {
+    try {
+      if (auth.user && auth.user.role === 1) {
+        const { data } = await axios.post(
+          `${import.meta.env.VITE_APP_API}/api/v1/cart/save-cart`,
+          { cart }
+        );
+        console.log("hii");
+        toast.success(data?.message);
+      }
+      setAuth({
+        ...auth,
+        user: null,
+        token: "",
+      });
+      localStorage.removeItem("auth");
+      toast.success("LogOut Successfully");
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <>
