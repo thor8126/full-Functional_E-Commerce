@@ -18,7 +18,7 @@ const CartPage = () => {
   const totalPrice = (val) => {
     try {
       let total = 0;
-      cart?.map((item) => (total = total + item.price));
+      cart?.map((item) => (total = total + item.price * item.quantity));
       total = total > 0 ? total + val : total + 0;
       return total.toLocaleString("en-US", {
         style: "currency",
@@ -29,7 +29,7 @@ const CartPage = () => {
     }
   };
 
-  // deleteitem
+  // delete item
   const removeCartItem = async (pid) => {
     try {
       let myCart = [...cart];
@@ -75,6 +75,33 @@ const CartPage = () => {
     } catch (error) {
       console.log(error);
       setLoading(false);
+    }
+  };
+
+  // increasing the quantity
+  const incrementQuantity = (productId) => {
+    const updatedCart = cart.map((item) => {
+      if (item._id === productId) {
+        return { ...item, quantity: item.quantity + 1 };
+      }
+      return item;
+    });
+    setCart(updatedCart);
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+  };
+
+  const decrementQuantity = (productId) => {
+    const itemIndex = cart.findIndex((item) => item._id === productId);
+    if (itemIndex > -1) {
+      const updatedCart = [...cart];
+      if (updatedCart[itemIndex].quantity > 1) {
+        updatedCart[itemIndex].quantity -= 1;
+      } else {
+        // If the quantity is 1, remove the item
+        updatedCart.splice(itemIndex, 1);
+      }
+      setCart(updatedCart);
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
     }
   };
   return (
@@ -147,10 +174,20 @@ const CartPage = () => {
                                   </div>
                                 </div>
                                 <div className="d-flex flex-row align-items-center">
-                                  <div style={{ width: 50 }}>
-                                    <h5 className="fw-normal mb-0">
-                                      {p.quantity}
-                                    </h5>
+                                  <div style={{ width: 150 }}>
+                                    <button
+                                      className="btn btn-outline-secondary"
+                                      onClick={() => decrementQuantity(p._id)}
+                                    >
+                                      -
+                                    </button>
+                                    <span className="mx-2">{p.quantity}</span>
+                                    <button
+                                      className="btn btn-outline-secondary"
+                                      onClick={() => incrementQuantity(p._id)}
+                                    >
+                                      +
+                                    </button>
                                   </div>
                                   <div style={{ width: 80 }}>
                                     <h5 className="mb-0">${p.price}</h5>

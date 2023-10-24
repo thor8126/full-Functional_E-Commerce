@@ -4,6 +4,7 @@ import Layout from "../../components/layout/Layout";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
+import Card from "../../components/Card";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -45,41 +46,7 @@ const Products = () => {
                       to={`/dashboard/admin/product/${p?.slug}`}
                       className="LinkCssremove"
                     >
-                      <div className="card mb-2" style={{ width: "18rem" }}>
-                        <div className="d-flex justify-content-between p-3">
-                          <p className="lead mb-0">{p.name}</p>
-                        </div>
-                        <img
-                          src={`${
-                            import.meta.env.VITE_APP_API
-                          }/api/v1/product/product-photo/${p._id}`}
-                          className="card-img-top"
-                          alt={p.name}
-                          height={"250px"}
-                        />
-                        <div className="card-body">
-                          <div className="d-flex justify-content-between">
-                            <p className="small">
-                              <a href="#!" className="text-muted">
-                                {p.name}
-                              </a>
-                            </p>
-                            <p className="small text-danger">
-                              <s>${p.price + p.price * 0.5}</s>
-                            </p>
-                          </div>
-                          <div className="d-flex justify-content-between mb-3">
-                            <h5 className="mb-0">{p.description}</h5>
-                            <h5 className="text-dark mb-0">${p.price}</h5>
-                          </div>
-                          <div className="d-flex justify-content-between mb-2">
-                            <p className="text-muted mb-0">
-                              Available:{" "}
-                              <span className="fw-bold">{p.quantity}</span>
-                            </p>
-                          </div>
-                        </div>
-                      </div>
+                      <Card p={p} Admin={"true"}  />
                     </Link>
                   </div>
                 ))}
