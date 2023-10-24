@@ -31,6 +31,7 @@ function Header() {
       });
       localStorage.removeItem("auth");
       toast.success("LogOut Successfully");
+      setCart([]);
     } catch (error) {
       console.log(error);
     }

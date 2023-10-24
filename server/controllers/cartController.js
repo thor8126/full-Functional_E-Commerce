@@ -2,10 +2,10 @@ import cartModel from "../models/cartModel.js";
 
 // fetching the cart items
 export const getCart = async (req, res) => {
-  const userId = req.user._id;
+  const user = req.user._id;
   try {
     const cart = await cartModel
-      .findOne({ user: userId })
+      .findOne({ user: user })
       .populate("items.product");
 
     if (!cart) {
@@ -15,7 +15,7 @@ export const getCart = async (req, res) => {
     }
     res.status(200).send({
       success: true,
-      cart,
+      cart: cart.items,
     });
   } catch (error) {
     console.log(error);
@@ -32,7 +32,6 @@ export const savecart = async (req, res) => {
   const user = req.user._id;
   const { cart } = req.body;
   try {
-    console.log(...cart);
     const existingCart = await cartModel.findOne({ user });
 
     if (existingCart) {

@@ -5,12 +5,32 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import "./AuthStyles/authstyle.css";
 import { useAuth } from "../../context/Auth";
+import { useCart } from "../../context/Cart";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [cart, setCart] = useCart();
+
+  // handle the cart items
+  // i am fetching cart items after the login
+  const getCartFromDataBase = async () => {
+    try {
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_APP_API}/api/v1/cart/get-cart`
+      );
+      if (data?.success) {
+        setCart(data?.cart);
+      } else {
+        let existingCartItem = localStorage.getItem("cart");
+        if (existingCartItem) setCart(JSON.parse(existingCartItem));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   // form function
   const handleSubmit = async (e) => {
@@ -31,6 +51,9 @@ const Login = () => {
           token: res.data.token,
         });
         localStorage.setItem("auth", JSON.stringify(res.data));
+        if (auth?.user && auth.user.role === 1) {
+          await getCartFromDataBase();
+        }
         navigate(location.state || "/");
       } else {
         toast.error(res.data.message);
