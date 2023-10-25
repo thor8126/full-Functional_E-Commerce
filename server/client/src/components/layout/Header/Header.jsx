@@ -1,27 +1,27 @@
 import React from "react";
 import { NavLink, Link } from "react-router-dom";
 import "./navbar.css";
-import { useAuth } from "../../../context/Auth";
+
 import toast from "react-hot-toast";
 import SearchInput from "../../forms/SearchInput";
 import useCategory from "../../../hooks/useCategory";
 import { Badge } from "antd";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
-import { useCart } from "../../../context/Cart";
+import { useLocalCart } from "../../../context/Cart";
 import axios from "axios";
+import { useAuth } from "../../../context/Auth";
 function Header() {
-  const [cart, setCart] = useCart();
+  const {cart, setCart} = useLocalCart();
   const { auth, setAuth } = useAuth();
   const categories = useCategory();
   const handleLogOut = async () => {
     try {
-      if (auth.user && auth.user.role === 1) {
+      if (cart.length && auth.user && auth.user.role === 0) {
         const { data } = await axios.post(
           `${import.meta.env.VITE_APP_API}/api/v1/cart/save-cart`,
           { cart }
         );
-        console.log("hii");
         toast.success(data?.message);
       }
       setAuth({
@@ -31,6 +31,7 @@ function Header() {
       });
       localStorage.removeItem("auth");
       toast.success("LogOut Successfully");
+      localStorage.removeItem("cart");
       setCart([]);
     } catch (error) {
       console.log(error);

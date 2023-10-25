@@ -42,8 +42,9 @@ function HomePage() {
     value: brand,
     id: index,
   }));
-  // get all categories
-  const getAllCategory = async () => {
+
+  // get categories
+  const getCategories = async () => {
     try {
       const { data } = await axios.get(
         `${import.meta.env.VITE_APP_API}/api/v1/category/get-category`
@@ -57,7 +58,7 @@ function HomePage() {
   };
 
   useEffect(() => {
-    getAllCategory();
+    getCategories(); // get all categories
     getTotal();
   }, []);
 

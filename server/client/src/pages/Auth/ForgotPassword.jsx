@@ -4,13 +4,11 @@ import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
 import "./AuthStyles/authstyle.css";
-import { useAuth } from "../../context/Auth"; 
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [answer, setAnswer] = useState("");
-  const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 

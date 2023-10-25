@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 export default function useCategory() {
-  const [categories, setCategories] = useState([]);
+  const [allCategories, setAllCategories] = useState([]);
 
   // get categories
   const getCategories = async () => {
@@ -11,7 +11,7 @@ export default function useCategory() {
         `${import.meta.env.VITE_APP_API}/api/v1/category/get-category`
       );
       if (data?.success) {
-        setCategories(data?.category);
+        setAllCategories(data?.category);
       }
     } catch (error) {
       console.log(error);
@@ -21,5 +21,5 @@ export default function useCategory() {
     getCategories();
   }, []);
 
-  return categories;
+  return allCategories;
 }

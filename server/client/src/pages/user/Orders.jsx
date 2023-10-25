@@ -7,7 +7,7 @@ import { useAuth } from "../../context/Auth";
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
-  const { auth } = useAuth();
+  const { auth, setAuth } = useAuth();
 
   const getOrders = async () => {
     try {

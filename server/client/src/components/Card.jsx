@@ -1,24 +1,35 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { useCart } from "../context/Cart";
 import toast from "react-hot-toast";
-const Card = ({ p, Admin=false }) => {
-  const [cart, setCart] = useCart();
+import { useLocalCart } from "../context/Cart.jsx";
+const Card = ({ p, Admin = false }) => {
+  const { cart, setCart } = useLocalCart();
   const navigate = useNavigate();
-  const addToCart = ({ p  }) => {
-    const existingItem = cart.find((item) => item._id === p._id);
+  const addToCart = (p) => {
+    let newItem = [];
+    if (!cart.length) {
+      newItem.push({ ...p, quantity: 1 });
+      localStorage.setItem("cart", JSON.stringify(newItem));
+      setCart(newItem);
+      return;
+    }
+    newItem = cart;
+    const existingItem = cart.filter((item) => item._id === p._id);
+    // console.log(existingItem);
 
-    if (existingItem) {
-      // If the item exists, increment its quantity by 1
-      existingItem.quantity += 1;
-      setCart([...cart]);
+    if (existingItem && existingItem.length !== 0) {
+      const updatedItem = existingItem[0];
+      updatedItem.quantity += 1;
+      const index = newItem.findIndex((item) => item._id === p._id);
+      newItem[index] = updatedItem;
+      setCart(newItem);
     } else {
       // If the item doesn't exist, add it with quantity 1
-      const newItem = { ...p, quantity: 1 };
-      setCart([...cart, newItem]);
+      newItem.push({ ...p, quantity: 1 });
+      setCart(newItem);
     }
     // Update the cart in local storage
-    localStorage.setItem("cart", JSON.stringify([...cart, p]));
+    localStorage.setItem("cart", JSON.stringify(newItem));
     toast.success("Item added to cart");
   };
 
@@ -80,7 +91,9 @@ const Card = ({ p, Admin=false }) => {
                 Add To Cart
               </button>
             </div>
-          ) : (<></>)}
+          ) : (
+            <></>
+          )}
         </div>
       </div>
     </div>

@@ -9,7 +9,6 @@ const CategoryProducts = () => {
   const [category, setCategory] = useState([]);
   const navigate = useNavigate();
   const params = useParams();
-  console.log(category);
   const getProductByCat = async () => {
     try {
       const { data } = await axios.get(

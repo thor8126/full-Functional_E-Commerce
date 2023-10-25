@@ -4,18 +4,15 @@ import cartModel from "../models/cartModel.js";
 export const getCart = async (req, res) => {
   const user = req.user._id;
   try {
-    const cart = await cartModel
-      .findOne({ user: user })
-      .populate("items.product");
-
+    const cart = await cartModel.findOne({ user: user }).populate("items");
     if (!cart) {
-      res.status(404).send({
+      return res.status(404).send({
         success: false,
       });
     }
     res.status(200).send({
       success: true,
-      cart: cart.items,
+      item: cart.items,
     });
   } catch (error) {
     console.log(error);
@@ -29,20 +26,24 @@ export const getCart = async (req, res) => {
 
 // before logout we are saving tha data in cart or updating the cart
 export const savecart = async (req, res) => {
+
   const user = req.user._id;
   const { cart } = req.body;
   try {
     const existingCart = await cartModel.findOne({ user });
-
-    if (existingCart) {
-      // Update the existing cart
-      existingCart.items = cart;
-      await existingCart.save();
+    if (cart.length > 0) {
+      if (existingCart) {
+        // Update the existing cart
+        existingCart.items = [...cart];
+        await existingCart.save();
+      } else {
+        // Create a new cart
+        await cartModel.create({ user, items: [...cart] });
+      }
     } else {
-      // Create a new cart
-      await cartModel.create({ user, items: [...cart] });
+      existingCart.items = [];
+      await existingCart.save();
     }
-
     res.status(200).send({ message: "Cart data saved successfully" });
   } catch (error) {
     console.log(error);

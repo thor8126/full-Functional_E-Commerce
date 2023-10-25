@@ -4,7 +4,7 @@ import UserMenu from "../../components/layout/UserMenu/UserMenu";
 import { useAuth } from "../../context/Auth";
 
 const DashBoard = () => {
-  const { auth } = useAuth();
+  const { auth, setAuth } = useAuth();
   return (
     <Layout title={"DashBoard E-Commerce"}>
       <div className="container-fluid m-3 p-3">

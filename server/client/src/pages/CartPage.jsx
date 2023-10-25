@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../components/layout/Layout";
-import { useCart } from "../context/Cart";
-import { useAuth } from "../context/Auth";
+import { useLocalCart } from "../context/Cart";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import toast from "react-hot-toast";
 import DropIn from "braintree-web-drop-in-react";
 import axios from "axios";
+import { useAuth } from "../context/Auth";
 const CartPage = () => {
-  const [cart, setCart] = useCart();
+  const {cart, setCart} = useLocalCart();
   const { auth, setAuth } = useAuth();
   const [clientToken, setClientToken] = useState("");
   const [instance, setInstance] = useState("");
@@ -18,7 +18,11 @@ const CartPage = () => {
   const totalPrice = (val) => {
     try {
       let total = 0;
-      cart?.map((item) => (total = total + item.price * item.quantity));
+      cart?.map((item) => {
+        if (item && item.price) {
+          total = total + item.price * item.quantity;
+        }
+      });
       total = total > 0 ? total + val : total + 0;
       return total.toLocaleString("en-US", {
         style: "currency",
@@ -151,8 +155,11 @@ const CartPage = () => {
                             </p>
                           </div>
                         </div>
-                        {cart?.map((p) => (
-                          <div className="card mb-3 mb-lg-0" key={p._id}>
+                        {cart?.map((p, index) => (
+                          <div
+                            className="card mb-3 mb-lg-0"
+                            key={index}
+                          >
                             <div className="card-body">
                               <div className="d-flex justify-content-between">
                                 <div className="d-flex flex-row align-items-center">
@@ -160,16 +167,16 @@ const CartPage = () => {
                                     <img
                                       src={`${
                                         import.meta.env.VITE_APP_API
-                                      }/api/v1/product/product-photo/${p._id}`}
+                                      }/api/v1/product/product-photo/${p?._id}`}
                                       className="img-fluid rounded-3"
                                       alt="Shopping item"
                                       style={{ width: 65 }}
                                     />
                                   </div>
                                   <div className="ms-3">
-                                    <h5>{p.name}</h5>
+                                    <h5>{p?.name}</h5>
                                     <p className="small mb-0">
-                                      {p.description}
+                                      {p?.description}
                                     </p>
                                   </div>
                                 </div>
@@ -177,20 +184,20 @@ const CartPage = () => {
                                   <div style={{ width: 150 }}>
                                     <button
                                       className="btn btn-outline-secondary"
-                                      onClick={() => decrementQuantity(p._id)}
+                                      onClick={() => decrementQuantity(p?._id)}
                                     >
                                       -
                                     </button>
-                                    <span className="mx-2">{p.quantity}</span>
+                                    <span className="mx-2">{p?.quantity}</span>
                                     <button
                                       className="btn btn-outline-secondary"
-                                      onClick={() => incrementQuantity(p._id)}
+                                      onClick={() => incrementQuantity(p?._id)}
                                     >
                                       +
                                     </button>
                                   </div>
                                   <div style={{ width: 80 }}>
-                                    <h5 className="mb-0">${p.price}</h5>
+                                    <h5 className="mb-0">${p?.price}</h5>
                                   </div>
                                   <button
                                     style={{
@@ -201,7 +208,7 @@ const CartPage = () => {
                                     <DeleteIcon
                                       className="text-danger"
                                       onClick={() => {
-                                        removeCartItem(p._id);
+                                        removeCartItem(p?._id);
                                       }}
                                     />
                                   </button>

@@ -1,18 +1,38 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../../components/layout/Layout";
 import { useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
+import axios, { all } from "axios";
 import toast from "react-hot-toast";
 import "./AuthStyles/authstyle.css";
+import { useLocalCart } from "../../context/Cart";
 import { useAuth } from "../../context/Auth";
-import { useCart } from "../../context/Cart";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [cart, setCart] = useCart();
+  const { cart, setCart } = useLocalCart();
+  const [allProducts, setAllProducts] = useState([]);
+  // Fetch products data and update the state
+  console.log(useLocalCart());
+  const fetchProducts = async () => {
+    try {
+      
+      const { data } = await axios.get(
+        `${import.meta.env.VITE_APP_API}/api/v1/product/get-products`
+      );
+      if (data?.success) {
+        setAllProducts(data?.products);
+      }
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      toast.error("Something went wrong");
+    }
+  };
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   // handle the cart items
   // i am fetching cart items after the login
@@ -21,17 +41,22 @@ const Login = () => {
       const { data } = await axios.get(
         `${import.meta.env.VITE_APP_API}/api/v1/cart/get-cart`
       );
-      if (data?.success) {
-        setCart(data?.cart);
-      } else {
-        let existingCartItem = localStorage.getItem("cart");
-        if (existingCartItem) setCart(JSON.parse(existingCartItem));
+      const newCart = [];
+      if (data?.success && data?.item?.length > 0) {
+        // now i will find the cart items from products
+        for (const item of data?.item) {
+          const product = allProducts.find((pro) => pro._id === item._id);
+          if (product) {
+            newCart.push({ ...product, quantity: item.quantity });
+          }
+        }
+        setCart([...newCart]);
+        localStorage.setItem("cart", JSON.stringify([...newCart]));
       }
     } catch (error) {
       console.log(error);
     }
   };
-
   // form function
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -44,16 +69,20 @@ const Login = () => {
         }
       );
       if (res?.data?.success) {
-        toast.success(res.data.message);
+        toast.success(res?.data?.message);
         setAuth({
           ...auth,
           user: res.data.user,
           token: res.data.token,
         });
         localStorage.setItem("auth", JSON.stringify(res.data));
-        if (auth?.user && auth.user.role === 1) {
-          await getCartFromDataBase();
-        }
+        const user = JSON.parse(localStorage.getItem("auth"));
+        setTimeout(() => {
+          if (user?.user?.role == 0) {
+            setCart([]);
+            getCartFromDataBase();
+          }
+        }, 2000);
         navigate(location.state || "/");
       } else {
         toast.error(res.data.message);
