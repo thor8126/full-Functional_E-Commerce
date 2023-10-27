@@ -7,11 +7,13 @@ import toast from "react-hot-toast";
 import { Box } from "@mui/material";
 import { Slider } from "@mui/material";
 import HomeIntro from "../components/layout/HomeIntro";
-import Card from "../components/Card";
 import { ShoeSize, ShoeColor, brands } from "../components/material";
 import CreatableSelect from "react-select/creatable";
+import ProductCard from "../components/Tailwind components/ProductCard";
+import Collection from "../components/Tailwind components/Collection";
 
 function HomePage() {
+  // const [allCategories] = useCategory();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [checked, setChecked] = useState([]);
@@ -187,6 +189,7 @@ function HomePage() {
   return (
     <Layout title={"All Products - Best Offers"}>
       <HomeIntro />
+      <Collection />
       <div className="row mt-3">
         <div className="col-md-3">
           <h4 className="text-center">Fileter by categorty</h4>
@@ -203,7 +206,7 @@ function HomePage() {
 
           {/* price filter */}
           <h4 className="text-center mt-4">Fileter by Prices</h4>
-          <div className="container">
+          <div className="container m-2">
             <Box sx={{ width: 300 }} className="w-100">
               <div className="d-flex flex-row  justify-align-align-content-between">
                 <>
@@ -292,19 +295,18 @@ function HomePage() {
           <div className="d-flex flex-column m-2 w-75">
             <button
               type="button"
-              className="btn btn-primary flex-fill me-1 w-75"
-              data-mdb-ripple-color="dark"
+              className="mt-1 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-5 py-2 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               onClick={() => window.location.reload()}
             >
-              Reset Filter
+              Reset Filters
             </button>
           </div>
         </div>
         <div className="col-md-9">
-          <h1 className="text-center">All Products</h1>
+          <h1 className="text-center mb-4 font-bold text-3xl">All Products</h1>
           <div className="d-flex flex-wrap justify-content-around">
             {products?.map((p) => (
-              <Card p={p} key={p._id} />
+              <ProductCard p={p} key={p._id} />
             ))}
           </div>
           <div className="m-2 p-3">

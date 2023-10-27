@@ -3,7 +3,7 @@ import Layout from "../components/layout/Layout";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import Card from "../components/Card";
+import ProductCard from "../components/Tailwind components/ProductCard";
 const CategoryProducts = () => {
   const [products, setProducts] = useState([]);
   const [category, setCategory] = useState([]);
@@ -39,7 +39,7 @@ const CategoryProducts = () => {
         <div className="row">
           <div className="d-flex flex-wrap justify-content-around">
             {products?.map((p) => (
-              <Card p={p} key={p._id} />
+              <ProductCard p={p} key={p._id} />
             ))}
           </div>
         </div>

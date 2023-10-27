@@ -4,13 +4,13 @@ import Layout from "../../components/layout/Layout";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
-import Card from "../../components/Card";
+import ProductCard from "../../components/Tailwind components/ProductCard";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
 
   // get all products
-  const getAllProucts = async () => {
+  const getAllProducts = async () => {
     try {
       const { data } = await axios.get(
         `${import.meta.env.VITE_APP_API}/api/v1/product/get-products`
@@ -20,33 +20,33 @@ const Products = () => {
       }
     } catch (error) {
       console.log(error);
-      toast.error("somethinh went wrong");
+      toast.error("Something went wrong");
     }
   };
 
   // lifecycle method
   useEffect(() => {
-    getAllProucts();
+    getAllProducts();
   }, []);
 
   return (
     <Layout>
-      <div className="row">
-        <div className="col-md-3">
+      <div className="lg:flex">
+        <div className="w-full lg:w-1/4 p-4">
           <AdminMenu />
         </div>
-        <div className="col-md-9">
-          <h1 className="text-center">All Product List</h1>
-          <section style={{ backgroundColor: "#eee" }}>
-            <div className="container py-5 w-100">
-              <div className="d-flex flex-wrap justify-content-around">
+        <div className="w-full lg:w-3/4 p-4">
+          <h1 className="text-center text-2xl">All Product List</h1>
+          <section className="py-5">
+            <div className="container mx-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                 {products?.map((p) => (
-                  <div className="mb-4 mx-2" key={p._id}>
+                  <div className="mb-4" key={p._id}>
                     <Link
                       to={`/dashboard/admin/product/${p?.slug}`}
-                      className="LinkCssremove"
+                      className="no-underline"
                     >
-                      <Card p={p} Admin={"true"}  />
+                      <ProductCard p={p} Admin="true" />
                     </Link>
                   </div>
                 ))}

@@ -10,7 +10,7 @@ import CreatableSelect from "react-select/creatable";
 const CreateProduct = () => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState([]);
-  const [category, setCategory] = useState([]);
+  const [category, setCategory] = useState(null);
   const [photo, setPhoto] = useState("");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -30,25 +30,25 @@ const CreateProduct = () => {
   const colorOptions = ShoeColor.map((color, index) => ({
     label: color,
     value: color,
-    id: index, 
+    id: index,
   }));
 
   const sizeOptions = ShoeSize.map((size, index) => ({
     label: size,
     value: size.toString(),
-    id: index, 
+    id: index,
   }));
-  const brandOptions = brands.map((brand, index) => ({
-    label: brand,
-    value: brand,
-    id: index, 
+  const brandOptions = brands.map((b, index) => ({
+    label: b,
+    value: b,
+    id: index,
   }));
-  // for availabe or not
+
   const options = [
     { value: "yes", label: "Yes" },
     { value: "no", label: "No" },
   ];
-  // get all categories
+
   const getAllCategory = async () => {
     try {
       const { data } = await axios.get(
@@ -67,14 +67,14 @@ const CreateProduct = () => {
     getAllCategory();
   }, []);
 
-  // create product function
   const handleCreate = async (e) => {
     e.preventDefault();
     try {
-      const formattedColorsString = colors.map(color => `"${color}"`).join("-");
-      const formattedSizeString = sizes.map(s => `"${s}"`).join("-");
-      console.log(formattedSizeString);
-      // const formattedSize = sizes.join('-');
+      const formattedColorsString = colors
+        .map((color) => `"${color}"`)
+        .join("-");
+      const formattedSizeString = sizes.map((s) => `"${s}"`).join("-");
+
       const productData = new FormData();
       productData.append("name", name);
       productData.append("description", description);
@@ -92,7 +92,7 @@ const CreateProduct = () => {
         productData
       );
       if (data?.success) {
-        toast.success(`${data?.message}`);
+        toast.success(data?.message);
         navigate("/dashboard/admin/products");
       } else {
         toast.error(data?.message);
@@ -105,32 +105,29 @@ const CreateProduct = () => {
 
   return (
     <Layout title={"DashBoard - Create Product"}>
-      <div className="container-fluid m-3 p-3">
-        <div className="row">
-          <div className="col-md-3">
+      <div className="container m-2 p-2">
+        <div className="lg:flex">
+          <div className="lg:w-1/4 mb-3 lg:mb-0">
             <AdminMenu />
           </div>
-          <div className="col-md-9">
-            <h1>CreateProduct</h1>
-            <div className="m-1 w-75">
-              {/* category */}
-
+          <div className="lg:w-3/4">
+            <h1 className="text-2xl">Create Product</h1>
+            <div className="w-full lg:w-3/4 mx-auto">
               <CreatableSelect
                 isClearable
                 options={categoryOptions}
                 className="mb-3"
+                value={category}
                 onChange={(newValue) => {
                   setCategory(newValue);
                 }}
               />
-
-              {/* size */}
               <CreatableSelect
                 isMulti
                 className="mb-3"
                 options={colorOptions}
+                value={colors}
                 onChange={(selectedOptions) => {
-                  // Extract the selected color values
                   const selectedColors = selectedOptions.map(
                     (option) => option.value
                   );
@@ -138,111 +135,94 @@ const CreateProduct = () => {
                 }}
                 placeholder="Please Select a Color"
               />
-
-              {/* colors */}
               <CreatableSelect
                 isMulti
                 className="mb-3"
                 options={sizeOptions}
+                value={sizes}
                 onChange={(selectedOptions) => {
-                  // Extract the selected size values
                   const selectedSizes = selectedOptions.map(
                     (option) => option.value
                   );
-
                   setSizes(selectedSizes);
                 }}
                 placeholder="Please Select a Size"
               />
-              {/* brand */}
               <CreatableSelect
                 isClearable
                 options={brandOptions}
                 className="mb-3"
+                value={brand}
                 onChange={(newValue) => {
-                  setBrand(newValue.value);
+                  setBrand(newValue);
                 }}
                 placeholder="Please Select a Brand"
               />
-
-              <div className="mb-3">
+              <input
+                type="text"
+                value={name}
+                placeholder="Write a name"
+                className="border border-gray-300 rounded-md px-3 py-2 w-full mb-3 focus:outline-none focus:border-blue-500"
+                onChange={(e) => setName(e.target.value)}
+              />
+              <textarea
+                type="text"
+                value={description}
+                placeholder="Write a description"
+                className="border border-gray-300 rounded-md px-3 py-2 w-full mb-3 focus:outline-none focus:border-blue-500"
+                onChange={(e) => setDescription(e.target.value)}
+              />
+              <input
+                type="number"
+                value={price}
+                placeholder="Write a price"
+                className="border border-gray-300 rounded-md px-3 py-2 w-full mb-3 focus:outline-none focus:border-blue-500"
+                onChange={(e) => setPrice(e.target.value)}
+              />
+              <CreatableSelect
+                options={options}
+                placeholder="Shipped"
+                value={shipping}
+                onChange={(value) => {
+                  setShipping(value.value);
+                }}
+                className="mb-3"
+              />
+              <CreatableSelect
+                options={options}
+                placeholder="isAvailable"
+                value={isAvailable}
+                onChange={(value) => {
+                  setIsAvailable(value.value);
+                }}
+                className="mb-3"
+              />
+              <label className="btn btn-outline-secondary col-md-12 mb-3">
+                {photo ? photo.name : " Upload Photo "}
                 <input
-                  type="text"
-                  value={name}
-                  placeholder="Write a name"
-                  className="form-control"
-                  onChange={(e) => setName(e.target.value)}
+                  type="file"
+                  name="photo"
+                  accept="image/*"
+                  onChange={(e) => setPhoto(e.target.files[0])}
+                  hidden
                 />
-              </div>
-              <div className="mb-3">
-                <textarea
-                  type="text"
-                  value={description}
-                  placeholder="Write a description"
-                  className="form-control"
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-              </div>
-              <div className="mb-3">
-                <input
-                  type="number"
-                  value={price}
-                  placeholder="Write a price"
-                  className="form-control"
-                  onChange={(e) => setPrice(e.target.value)}
-                />
-              </div>
-
-              <div className="mb-3">
-                <CreatableSelect
-                  options={options}
-                  placeholder="Shipped"
-                  onChange={(value) => {
-                    setShipping(value.value);
-                  }}
-                />
-              </div>
-              <div className="mb-3">
-                <CreatableSelect
-                  options={options}
-                  placeholder="isAvailable"
-                  onChange={(value) => {
-                    setIsAvailable(value.value);
-                  }}
-                />
-              </div>
-              <div className="mb-3">
-                <label
-                  className="
-                  btn btn-outline-secondary col-md-12"
-                >
-                  {photo ? photo.name : " Upload Photo "}
-                  <input
-                    type="file"
-                    name="photo"
-                    accept="image/*"
-                    onChange={(e) => setPhoto(e.target.files[0])}
-                    hidden
+              </label>
+              {photo && (
+                <div className="text-center mb-3">
+                  <img
+                    src={URL.createObjectURL(photo)}
+                    alt={photo.name}
+                    height="200"
+                    className="img img-responsive"
                   />
-                </label>
-              </div>
-              <div className="mb-3">
-                {photo && (
-                  <div className="text-center">
-                    <img
-                      src={URL.createObjectURL(photo)}
-                      alt={photo.name}
-                      height={"200px"}
-                      className="img img-responsive"
-                    />
-                  </div>
-                )}
-              </div>
-              <div className="mb-3">
-                <button className="btn btn-primary" onClick={handleCreate}>
-                  Create Product
-                </button>
-              </div>
+                </div>
+              )}
+              <button
+                className="bg-blue-500 text-white rounded px-4 py-2"
+                onClick={handleCreate}
+              >
+                Create Product
+              </button>
             </div>
           </div>
         </div>

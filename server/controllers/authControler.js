@@ -158,6 +158,7 @@ export const updateProfileController = async (req, res) => {
 // forgotPasswordControler
 export const forgotPasswordControler = async (req, res) => {
   try {
+    console.log("hii");
     const { email, answer, newPassword } = req.body;
     // here i am checking if any field is required
     let keys = ["email", "answer", "newPassword"];

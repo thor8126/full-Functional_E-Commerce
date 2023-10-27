@@ -3,6 +3,7 @@ import Header from "./Header/Header";
 import Footer from "./Footer/Footer";
 import { Helmet } from "react-helmet";
 import { Toaster } from "react-hot-toast";
+
 function Layout({ children, title, description, keywords, author }) {
   return (
     <>
@@ -15,7 +16,7 @@ function Layout({ children, title, description, keywords, author }) {
         <title>{title}</title>
       </Helmet>
       <Header />
-      <main style={{ minHeight: "80vh" }}>
+      <main>
         {children}
         <Toaster />
       </main>
@@ -23,10 +24,11 @@ function Layout({ children, title, description, keywords, author }) {
     </>
   );
 }
+
 Layout.defaultProps = {
   title: "E-Commerce Website",
-  description: "mern stack Project, Full stack Project",
-  keywords: "mern, react, node.js, node, mongodb, express",
+  description: "MERN stack Project, Full stack Project",
+  keywords: "MERN, React, Node.js, Node, MongoDB, Express",
   author: "Sahil Garg",
 };
 

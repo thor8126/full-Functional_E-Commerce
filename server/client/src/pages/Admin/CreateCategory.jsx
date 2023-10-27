@@ -30,11 +30,11 @@ function CreateCategory() {
       }
     } catch (error) {
       console.log(error);
-      toast.error("Something wrong while creting category");
+      toast.error("Something wrong while creating category");
     }
   };
 
-  // get all cat
+  // get all categories
   const getAllCategory = async () => {
     try {
       const { data } = await axios.get(
@@ -53,7 +53,7 @@ function CreateCategory() {
     getAllCategory();
   }, []);
 
-  //update category
+  // update category
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
@@ -74,11 +74,11 @@ function CreateCategory() {
       }
     } catch (error) {
       console.log(error);
-      toast.error("Something wrong while update categoory");
+      toast.error("Something wrong while updating category");
     }
   };
 
-  //delete category
+  // delete category
   const handleDelete = async (id, name) => {
     try {
       const { data } = await axios.delete(
@@ -92,40 +92,41 @@ function CreateCategory() {
       }
     } catch (error) {
       console.log(error);
-      toast.error("Something wrong while delete category");
+      toast.error("Something wrong while deleting category");
     }
   };
+
   return (
-    <Layout title={"DashBoard - Create Category"}>
-      <div className="container-fluid m-3 p-3">
-        <div className="row">
-          <div className="col-md-3 ">
+    <Layout title="Dashboard - Create Category">
+      <div className="container mx-auto p-3">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="lg:col-span-1">
             <AdminMenu />
           </div>
-          <div className="col-md-9">
-            <h1>Manage Category</h1>
-            <div className="p3 w-50">
+          <div className="lg:col-span-2">
+            <h1 className="text-2xl font-bold">Manage Category</h1>
+            <div className="w-full lg:w-1/2 p-3">
               <CategoryForm
                 handleSubmit={handleSubmit}
                 value={name}
                 setValue={setName}
               />
             </div>
-            <div className="w-75">
-              <table className="table">
+            <div className="w-full">
+              <table className="table-auto w-full">
                 <thead>
                   <tr>
-                    <th scope="col">Name</th>
-                    <th scope="col">Actions</th>
+                    <th className="px-4 py-2">Name</th>
+                    <th className="px-4 py-2">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {categories?.map((c) => (
                     <tr key={c._id}>
-                      <td>{c.name}</td>
-                      <td>
+                      <td className="px-4 py-2">{c.name}</td>
+                      <td className="px-4 py-2">
                         <button
-                          className="btn btn-primary ms-2"
+                          className="bg-blue-500 hover:bg-blue-700 text-white py-1 px-3 rounded-md mr-2"
                           onClick={() => {
                             setVisible(true);
                             setUpdatedName(c.name);
@@ -135,7 +136,7 @@ function CreateCategory() {
                           Edit
                         </button>
                         <button
-                          className="btn btn-danger ms-2"
+                          className="bg-red-500 hover-bg-red-700 text-white py-1 px-3 rounded-md"
                           onClick={() => {
                             handleDelete(c._id, c.name);
                           }}
@@ -149,19 +150,15 @@ function CreateCategory() {
               </table>
             </div>
           </div>
-          <Modal
-            onCancel={() => setVisible(false)}
-            footer={null}
-            visible={visible}
-          >
-            <CategoryForm
-              value={updatedName}
-              setValue={setUpdatedName}
-              handleSubmit={handleUpdate}
-            />
-          </Modal>
         </div>
       </div>
+      <Modal onCancel={() => setVisible(false)} footer={null}>
+        <CategoryForm
+          value={updatedName}
+          setValue={setUpdatedName}
+          handleSubmit={handleUpdate}
+        />
+      </Modal>
     </Layout>
   );
 }

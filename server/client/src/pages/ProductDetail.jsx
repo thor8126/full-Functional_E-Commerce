@@ -1,52 +1,26 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Layout from "../components/layout/Layout";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import { useLocalCart } from "../context/Cart";
-import toast from "react-hot-toast";
-import Card from "../components/Card";
+import { CartContext } from "../context/Cart";
+import ProductCard from "../components/Tailwind components/ProductCard";
+
+function classNames(...classes) {
+  return classes.filter(Boolean).join(" ");
+}
 
 const ProductDetail = () => {
-  const { cart, setCart } = useLocalCart();
+  const { addToCart } = useContext(CartContext);
   const params = useParams();
   const [product, setProduct] = useState({});
   const [relatedProduts, setRelatedProduts] = useState([]);
   const navigate = useNavigate();
-  // aaded to cart
-  const addToCart = (p) => {
-    let newItem = [];
-    if (!cart.length) {
-      newItem.push({ ...p, quantity: 1 });
-      localStorage.setItem("cart", JSON.stringify(newItem));
-      setCart(newItem);
-      return;
-    }
-    newItem = cart;
-    const existingItem = cart.filter((item) => item._id === p._id);
-    // console.log(existingItem);
 
-    if (existingItem && existingItem.length !== 0) {
-      const updatedItem = existingItem[0];
-      updatedItem.quantity += 1;
-      const index = newItem.findIndex((item) => item._id === p._id);
-      newItem[index] = updatedItem;
-      setCart(newItem);
-    } else {
-      // If the item doesn't exist, add it with quantity 1
-      newItem.push({ ...p, quantity: 1 });
-      setCart(newItem);
-    }
-    // Update the cart in local storage
-    localStorage.setItem("cart", JSON.stringify(newItem));
-    toast.success("Item added to cart");
-  };
-  // initials p details
   useEffect(() => {
     if (params?.slug) getProduct();
   }, [params?.slug]);
 
-  // get product
   const getProduct = async () => {
     try {
       const { data } = await axios.get(
@@ -55,7 +29,9 @@ const ProductDetail = () => {
         }`
       );
       setProduct(data?.product);
-      getSimilarProducts(data?.product?._id, data?.product?.category?._id);
+      if (data?.product) {
+        getSimilarProducts(data?.product?._id, data?.product?.category._id);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -70,7 +46,6 @@ const ProductDetail = () => {
     size = size.split("-");
   }
 
-  // get similar products
   const getSimilarProducts = async (pid, cid) => {
     try {
       const { data } = await axios.get(
@@ -83,84 +58,83 @@ const ProductDetail = () => {
       console.log(error);
     }
   };
+
   return (
     <Layout>
-      <div className="row container mt-5">
-        <div className="col-md-5">
-          <img
-            src={`${
-              import.meta.env.VITE_APP_API
-            }/api/v1/product/product-photo/${product._id}`}
-            className="card-img-top rounded-3 w-75"
-            alt={product?.name}
-          />
-        </div>
-        <div className="col-md-6">
-          <h1 className="text-center mb-3">Product Details</h1>
-          <div className="d-flex  ">
-            <p>Name : </p>
-            <h5 className=" ms-2"> {product?.name}</h5>
-          </div>
-          <div className="d-flex  ">
-            <p>Brand : </p>
-            <h5 className=" ms-2"> {product?.brand}</h5>
-          </div>
-          <div className="d-flex  ">
-            <p>Description : </p>
-            <h5 className=" ms-2"> {product?.description}</h5>
-          </div>
-          <div className="d-flex ms-1">
-            <p>Price: </p>
-            <h5 className="text-dark ms-2  fs-4">${product.price}</h5>
-            <p className="small text-secondary ms-3">
-              <s className="fs-5">${product.price + product.price * 0.5}</s>
-            </p>
-          </div>
-          <div className="d-flex ms-1">
-            <p>Category : </p>
-            <h5 className=" ms-2">{product?.category?.name}</h5>
-          </div>
-          <div className="d-flex ms-1"></div>
+      <div className="row container">
+        <div className="bg-white">
           <div>
-            {product.size ? (
-              <div className="d-flex  ">
-                <p>Size: </p>
-                <h5 className=" ms-2"> {size.join(", ")}</h5>
+            {/* Image gallery */}
+            <div className="mx-auto mt-6 max-w-2xl sm:px-6">
+              <div className="aspect-h-5 aspect-w-4 lg:aspect-h-4 lg:aspect-w-3 sm:overflow-hidden sm:rounded-lg">
+                {product && (
+                  <img
+                    className="h-full w-full object-cover object-center"
+                    src={`${
+                      import.meta.env.VITE_APP_API
+                    }/api/v1/product/product-photo/${product?._id}`}
+                    alt={product?.name}
+                  />
+                )}
               </div>
-            ) : (
-              <p>No sizes available</p>
-            )}
-          </div>
-          <div>
-            {product.colors ? (
-              <div className="d-flex  ">
-                <p>Colors: </p>
-                <h5 className=" ms-2"> {colors.join(", ")}</h5>
-              </div>
-            ) : (
-              <p>No sizes available</p>
-            )}
-          </div>
+            </div>
 
-          <button
-            type="button"
-            className="btn btn-secondary flex-fill ms-1"
-            onClick={() => {
-              addToCart(product);
-            }}
-          >
-            Add To Cart
-          </button>
+            {/* Product info */}
+            <div className="mx-auto max-w-2xl px-4 pb-16 pt-10 sm:px-6 lg:grid">
+              <div className="lg:col-span-2 lg:border-r lg:border-gray-200 lg:pr-8">
+                <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
+                  {product?.name}
+                </h1>
+                <h2 className="text-xl  tracking-tight text-gray-900 sm:text-3xl">
+                  {product?.brand}
+                </h2>
+              </div>
+
+              {/* Options */}
+              <div className="mt-2 justify-center lg:row-span-3 lg:mt-0">
+                <div className="flex">
+                  <p className="text-3xl text-blue-400 tracking-tight ">
+                    {product?.price}
+                  </p>
+                  <s className="fs-5 text-red-400 ml-3">
+                    ${product?.price + product?.price * 0.5}
+                  </s>
+                </div>
+
+                <div className="d-flex mt-2"></div>
+                <div>
+                  {product?.size ? (
+                    <div className="d-flex items-center ">
+                      <p className="text-xl font-semibold">Size: </p>
+                      <p className=" ms-2"> {size.join(", ")}</p>
+                    </div>
+                  ) : (
+                    <p>No sizes available</p>
+                  )}
+                </div>
+
+                <button
+                  type="button"
+                  className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover-bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                  onClick={() => {
+                    addToCart(product);
+                  }}
+                >
+                  Add to bag
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div className="row text-center container-fluid mt-5">
-        <h3 className="mb-5">similar products</h3>
+      <div className="row container-fluid mt-5">
+        <h2 className="mb-5 font-semibold text-center">Similar Products</h2>
         {relatedProduts.length < 1 && (
           <h5 className="text-center">No Similar Products</h5>
         )}
-        <div className="d-flex flex-wrap justify-content-around ">
+        <div className="d-flex flex-wrap justify-content-around">
           {relatedProduts?.map((p) => (
-            <Card p={p} key={p._id} />
+            <ProductCard p={p} key={p._id} />
           ))}
         </div>
       </div>

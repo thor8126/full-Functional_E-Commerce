@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import Layout from "../../components/layout/Layout";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
-import "./AuthStyles/authstyle.css";
-
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [answer, setAnswer] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
@@ -16,17 +15,19 @@ const ForgotPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_APP_API}/api/v1/auth//forgot-password`,
-        {
-          email,
-          newPassword,
-          answer,
-        }
-      );
+        console.log("hii");
+        const res = await axios.post(
+            `${import.meta.env.VITE_APP_API}/api/v1/auth//forgot-password`,
+            {
+                email,
+                newPassword,
+                answer,
+            }
+            );
+            console.log("hi1");
       if (res?.data?.success) {
         toast.success(res?.data?.message);
-        navigate("/login");
+        navigate(location.state || "/");
       } else {
         toast.error(res.data.message);
       }
@@ -35,57 +36,94 @@ const ForgotPassword = () => {
       toast.error("Something went wrong");
     }
   };
-  return (
-    <Layout title={"Forgot Password - Ecommerce App"}>
-      <div className="form-container " style={{ minHeight: "90vh" }}>
-        <form onSubmit={handleSubmit}>
-          <h4 className="title">Reset Password</h4>
 
-          <div className="mb-3">
-            <input
-              type="email"
-              autoFocus
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="form-control"
-              id="exampleInputEmail1"
-              placeholder="Enter Your Email "
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <input
-              type="text"
-              autoFocus
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
-              className="form-control"
-              id="exampleInputEmail1"
-              placeholder="Enter Your Favorite Sport "
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <input
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              className="form-control"
-              id="exampleInputPassword1"
-              placeholder="Enter Your Password"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            className="btn btn-primary"
-            onClick={() => {
-              handleSubmit();
-            }}
-          >
-            Reset
-          </button>
-        </form>
+  // handle password show or not
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword); // togle visibility
+  };
+  return (
+    <Layout>
+      <div className="bg-white py-6 sm:py-8 lg:py-12">
+        <div className="mx-auto max-w-screen-2xl px-4 md:px-8">
+          <h2 className="mb-4 text-center text-2xl font-bold text-gray-800 md:mb-8 lg:text-3xl">
+            Reset Password
+          </h2>
+          <form className="mx-auto max-w-lg rounded-lg border">
+            <div className="flex flex-col gap-4 p-4 md:p-8">
+              <div>
+                <label
+                  htmlFor="email"
+                  className="mb-2 inline-block text-sm text-gray-800 sm:text-base"
+                >
+                  Email
+                </label>
+                <input
+                  name="email"
+                  className="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring"
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter Your Email"
+                  required
+                />
+              </div>
+              <div>
+                <label
+                  htmlFor="password"
+                  className="mb-2 inline-block text-sm text-gray-800 sm:text-base"
+                >
+                  New Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    className="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring"
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Enter Your Password"
+                    required
+                  />
+                  <button
+                    className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500"
+                    onClick={togglePasswordVisibility}
+                  >
+                    {showPassword ? "Hide" : "Show"}
+                  </button>
+                </div>
+                <div>
+                  <label
+                    htmlFor="answer"
+                    className="mb-2 inline-block text-sm text-gray-800 sm:text-base"
+                  >
+                    Answer
+                  </label>
+                  <input
+                    name="email"
+                    className="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring"
+                    onChange={(e) => setAnswer(e.target.value)}
+                    placeholder="What is Your Favorite sports"
+                    required
+                  />
+                </div>
+              </div>
+              <button
+                className="block rounded-lg bg-gray-800 px-8 py-3 text-center text-sm font-semibold text-white outline-none ring-gray-300 transition duration-100 hover:bg-gray-700 focus-visible:ring active:bg-gray-600 md:text-base"
+                onClick={handleSubmit}
+              >
+                Reset Password
+              </button>
+            </div>
+            <div className="flex items-center justify-center bg-gray-100 p-4">
+              <p className="text-center text-sm text-gray-500">
+                Don't have an account?{" "}
+                <Link
+                  to="/register"
+                  className="text-indigo-500 transition duration-100 hover:text-indigo-600 active:text-indigo-700"
+                >
+                  Register
+                </Link>
+              </p>
+            </div>
+          </form>
+        </div>
       </div>
     </Layout>
   );

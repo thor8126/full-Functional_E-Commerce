@@ -2,12 +2,20 @@ import React from "react";
 
 const DeletePrompt = ({ onConfirm, onCancel }) => {
   return (
-    <div className="delete-confirmation">
-      <p>Are you sure you want to delete this product?</p>
-      <button className="btn btn-danger px-lg-4 m-1" onClick={onConfirm}>
+    <div className="delete-confirmation bg-white p-4 border border-gray-200 rounded shadow-lg">
+      <p className="text-gray-700">
+        Are you sure you want to delete this product?
+      </p>
+      <button
+        className="bg-red-500 text-white px-4 py-2 rounded m-1"
+        onClick={onConfirm}
+      >
         Yes
       </button>
-      <button className="btn btn-secondary px-lg-4 m-1" onClick={onCancel}>
+      <button
+        className="bg-gray-300 text-gray-700 px-4 py-2 rounded m-1"
+        onClick={onCancel}
+      >
         No
       </button>
     </div>

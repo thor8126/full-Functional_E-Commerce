@@ -20,10 +20,10 @@ import Products from "./pages/Admin/Products";
 import UpdateProduct from "./pages/Admin/UpdateProduct";
 import Search from "./pages/Search";
 import ProductDetail from "./pages/ProductDetail";
-import Categories from "./pages/categories";
 import CategoryProducts from "./pages/CategoryProducts";
 import CartPage from "./pages/CartPage";
 import AdminOrders from "./pages/Admin/AdminOrders";
+import Sidebar from "./components/Tailwind components/Sidebar";
 function App() {
   return (
     <>
@@ -31,11 +31,10 @@ function App() {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/product/:slug" element={<ProductDetail />} />
-          <Route path="/categories" element={<Categories />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/category/:slug" element={<CategoryProducts />} />
           <Route path="/search" element={<Search />} />
-          
+
           <Route path="/dashboard" element={<PrivateRoute />}>
             <Route path="user" element={<DashBoard />} />
             <Route path="user/orders" element={<Orders />} />
@@ -58,6 +57,7 @@ function App() {
           <Route path="/policy" element={<Policy />} />
           <Route path="/*" element={<PageNotFound />} />
         </Routes>
+        <Sidebar />
       </BrowserRouter>
     </>
   );

@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import Layout from "../components/layout/Layout";
-import { useLocalCart } from "../context/Cart";
+import { CartContext } from "../context/Cart";
 import { useNavigate } from "react-router-dom";
 import DeleteIcon from "@mui/icons-material/Delete";
 import toast from "react-hot-toast";
@@ -8,7 +8,7 @@ import DropIn from "braintree-web-drop-in-react";
 import axios from "axios";
 import { useAuth } from "../context/Auth";
 const CartPage = () => {
-  const {cart, setCart} = useLocalCart();
+  const { cart, setCart } = useContext(CartContext);
   const { auth, setAuth } = useAuth();
   const [clientToken, setClientToken] = useState("");
   const [instance, setInstance] = useState("");
@@ -156,10 +156,7 @@ const CartPage = () => {
                           </div>
                         </div>
                         {cart?.map((p, index) => (
-                          <div
-                            className="card mb-3 mb-lg-0"
-                            key={index}
-                          >
+                          <div className="card mb-3 mb-lg-0" key={index}>
                             <div className="card-body">
                               <div className="d-flex justify-content-between">
                                 <div className="d-flex flex-row align-items-center">

@@ -16,7 +16,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // get user Data
+  // Get user Data
   useEffect(() => {
     const { name, email, phone, address } = auth?.user;
     setName(name);
@@ -25,7 +25,7 @@ const Profile = () => {
     setPhone(phone);
   }, [auth?.user]);
 
-  // form function
+  // Form function
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -52,68 +52,68 @@ const Profile = () => {
 
   return (
     <Layout title={"Users - Profile"}>
-      <div className="container-fluid m-3 p-3 w-100">
-        <div className="row">
-          <div className="col-md-3">
+      <div className="container mx-auto p-4">
+        <div className="lg:flex">
+          <div className="lg:w-1/4 p-3">
             <UserMenu />
           </div>
-          <div className="col-md-9 w-50">
-            <form onSubmit={handleSubmit}>
-              <h4 className="title">User Profile</h4>
-              <div className="mb-3">
+          <div className="lg:w-3/4 p-3">
+            <form
+              onSubmit={handleSubmit}
+              className="bg-white rounded-lg shadow-md p-4"
+            >
+              <h4 className="text-xl font-semibold mb-4">User Profile</h4>
+              <div className="mb-4">
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="form-control"
-                  id="exampleInputEmail1"
                   placeholder="Enter Your Name"
                   autoFocus
+                  className="border border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:border-blue-500"
                 />
               </div>
-              <div className="mb-3">
+              <div className="mb-4">
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="form-control"
-                  id="exampleInputEmail1"
-                  placeholder="Enter Your Email "
+                  placeholder="Enter Your Email"
                   disabled
+                  className="border border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:border-blue-500"
                 />
               </div>
-              <div className="mb-3">
+              <div className="mb-4">
                 <input
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="form-control"
-                  id="exampleInputPassword1"
                   placeholder="Enter Your Password"
+                  className="border border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:border-blue-500"
                 />
               </div>
-              <div className="mb-3">
+              <div className="mb-4">
                 <input
                   type="text"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  className="form-control"
-                  id="exampleInputEmail1"
                   placeholder="Enter Your Phone"
+                  className="border border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:border-blue-500"
                 />
               </div>
-              <div className="mb-3">
+              <div className="mb-4">
                 <input
                   type="text"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  className="form-control"
-                  id="exampleInputEmail1"
                   placeholder="Enter Your Address"
+                  className="border border-gray-300 rounded-md px-3 py-2 w-full focus:outline-none focus:border-blue-500"
                 />
               </div>
-
-              <button type="submit" className="btn btn-primary">
+              <button
+                type="submit"
+                className="bg-blue-500 text-white rounded-md px-4 py-2"
+              >
                 Update
               </button>
             </form>
