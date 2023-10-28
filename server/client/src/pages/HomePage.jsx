@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../components/layout/Layout";
 import axios from "axios";
-import { Checkbox } from "antd";
-import { useNavigate } from "react-router-dom";
+// import { Checkbox } from "antd";
 import toast from "react-hot-toast";
 import { Box } from "@mui/material";
 import { Slider } from "@mui/material";
@@ -12,6 +11,8 @@ import CreatableSelect from "react-select/creatable";
 import ProductCard from "../components/Tailwind components/ProductCard";
 import Collection from "../components/Tailwind components/Collection";
 import useCategory from "../hooks/useCategory";
+import Checkbox from "@mui/material/Checkbox";
+import FormControlLabel from "@mui/material/FormControlLabel";
 
 function HomePage() {
   // const [allCategories] = useCategory();
@@ -21,7 +22,6 @@ function HomePage() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState();
-  const navigate = useNavigate();
   const [value, setValue] = React.useState([0, 1000]);
   const [filterTimeout, setFilterTimeout] = useState(null);
   const [size, setSize] = useState([]);
@@ -45,7 +45,7 @@ function HomePage() {
     value: brand,
     id: index,
   }));
-  
+
   useEffect(() => {
     getTotal();
   }, []);
@@ -181,12 +181,17 @@ function HomePage() {
           <h4 className="text-center">Fileter by categorty</h4>
           <div className="d-flex flex-column m-2">
             {categories?.map((c) => (
-              <Checkbox
+              <FormControlLabel
                 key={c._id}
-                onChange={(e) => handleFilter(e.target.checked, c._id)}
-              >
-                <h6>{c.name}</h6>
-              </Checkbox>
+                control={
+                  <Checkbox
+                    checked={checked.includes(c._id)}
+                    onChange={(e) => handleFilter(e.target.checked, c._id)}
+                    color="primary"
+                  />
+                }
+                label={<h6>{c.name}</h6>}
+              />
             ))}
           </div>
 
