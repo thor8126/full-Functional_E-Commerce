@@ -77,14 +77,7 @@ const Search = () => {
           </div>
         </div>
       </div>
-      <Link to="/">
-        <button
-          type="button"
-          className="bg-black text-white px-4 py-2 rounded absolute bottom-4 left-1/2 transform -translate-x-1/2 hover:bg-gray-900"
-        >
-          <AiOutlineArrowLeft />
-        </button>
-      </Link>
+     
     </Layout>
   );
 };

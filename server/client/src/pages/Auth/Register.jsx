@@ -16,15 +16,10 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log("hii");
-      console.log(name, email, password, phone, address, answer);
-
       const res = await axios.post(
         `${import.meta.env.VITE_APP_API}/api/v1/auth/register`,
         { name, email, password, phone, address, answer }
       );
-      console.log("hii");
-      console.log(res);
       if (res?.data?.success) {
         toast.success(res.data.message);
         navigate("/login");

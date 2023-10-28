@@ -13,6 +13,7 @@ const Collection = () => {
             {/* product - start */}
             <div>
               <Link
+                to="/category/men's-sports-shoes"
                 className="group relative flex h-96 items-end overflow-hidden rounded-lg bg-gray-100 p-4 shadow-lg"
               >
                 <img
@@ -24,7 +25,7 @@ const Collection = () => {
                 <div className="relative flex w-full flex-col rounded-lg bg-white p-4 text-center">
                   <span className="text-gray-500">Running Shoes</span>
                   <span className="text-lg font-bold text-gray-800 lg:text-xl">
-                     Causual
+                    Causual
                   </span>
                 </div>
               </Link>
@@ -33,6 +34,7 @@ const Collection = () => {
             {/* product - start */}
             <div>
               <Link
+                to="/category/men's-casual-shoes"
                 className="group relative flex h-96 items-end overflow-hidden rounded-lg bg-gray-100 p-4 shadow-lg"
               >
                 <img
@@ -53,10 +55,11 @@ const Collection = () => {
             {/* product - start */}
             <div>
               <Link
+                to="/category/men's-formal-shoes"
                 className="group relative flex h-96 items-end overflow-hidden rounded-lg bg-gray-100 p-4 shadow-lg"
               >
                 <img
-                 src="../../../public/Collection-Images/Loafers.jpg"
+                  src="../../../public/Collection-Images/Loafers.jpg"
                   loading="lazy"
                   alt="Photo by Austin Wade"
                   className="absolute inset-0 h-full w-full object-cover object-center transition duration-200 group-hover:scale-110"
@@ -73,10 +76,11 @@ const Collection = () => {
             {/* product - start */}
             <div>
               <Link
+                to="/category/men's-formal-shoes"
                 className="group relative flex h-96 items-end overflow-hidden rounded-lg bg-gray-100 p-4 shadow-lg"
               >
                 <img
-                 src="../../../public/Collection-Images/formal.jpg"
+                  src="../../../public/Collection-Images/formal.jpg"
                   loading="lazy"
                   alt="Photo by Austin Wade"
                   className="absolute inset-0 h-full w-full object-cover object-center transition duration-200 group-hover:scale-110"

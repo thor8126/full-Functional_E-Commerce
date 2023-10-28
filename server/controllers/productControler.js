@@ -5,6 +5,7 @@ import fs from "fs";
 import OrderModel from "../models/OrderModel.js";
 import braintree from "braintree";
 import dotenv from "dotenv";
+import { log } from "console";
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ export const createProductController = async (req, res, next) => {
       size,
       isAvailable,
     } = req.fields;
+    console.log(brand);
 
     const { photo } = req.files;
     let keys = [
@@ -263,12 +265,10 @@ export const productFiltersController = async (req, res) => {
     const { brand, value, checked, colors, size } = req.body;
 
     const filter = {};
-
     // Check if any categories are selected
     if (checked && checked.length > 0) {
       filter.category = { $in: checked };
     }
-
     // Check if price range is specified
     if (value && value.length === 2) {
       filter.price = { $gte: value[0], $lte: value[1] };
@@ -298,6 +298,7 @@ export const productFiltersController = async (req, res) => {
       filter.size = { $in: sizeRegex };
     }
 
+    console.log("Filter criteria ", filter);
     // Query the database with the constructed filter
     const products = await productModel
       .find(filter)

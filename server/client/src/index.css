@@ -2,21 +2,5 @@
 @tailwind components;
 @tailwind utilities;
 
-/* font-family: 'Playfair Display', serif;
-font-family: 'Poppins', sans-serif; */
-/* 
-// ca
-tegort buttons */
-.cat-btn {
-  background-color: lightgray; /* Default background color */
-  color: white; /* Default font color */
-  padding: 10px 20px;
-  text-decoration: none;
-  display: inline-block;
-  border-radius: 5px;
-  transition: background-color 0.3s, color 0.3s; /* Smooth transition effect */
-}
-.cat-btn:hover {
-  background-color: darkgray; /* Background color on hover */
-  color: white; /* Font color on hover /*/
-}
+
+

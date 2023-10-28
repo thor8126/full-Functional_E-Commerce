@@ -20,15 +20,13 @@ const CartProvider = ({ children }) => {
         setCart([]); // If it's not an array, initialize as an empty array
       }
     }
-  }, [cart]);
+  }, []);
 
   useEffect(() => {
     if (cart.length === 0) {
       localStorage.removeItem("cart");
     }
   }, [cart]);
-
-
 
   useEffect(() => {
     const total = cart.reduce((accumulator, currentItem) => {
@@ -107,19 +105,23 @@ const CartProvider = ({ children }) => {
   };
 
   const decrementQuantity = (productId) => {
-    const itemIndex = cart.findIndex((item) => item._id === productId);
-    if (itemIndex > -1) {
-      const updatedCart = [...cart];
-      if (updatedCart[itemIndex].quantity > 1) {
-        updatedCart[itemIndex].quantity -= 1;
-      } else {
-        // If the quantity is 1, remove the item
-        updatedCart.splice(itemIndex, 1);
+    setCart((prevCart) => {
+      const itemIndex = prevCart.findIndex((item) => item._id === productId);
+      if (itemIndex > -1) {
+        const updatedCart = [...prevCart];
+        if (updatedCart[itemIndex].quantity > 1) {
+          updatedCart[itemIndex].quantity -= 1;
+        } else {
+          // If the quantity is 1, remove the item
+          updatedCart.splice(itemIndex, 1);
+        }
+        localStorage.setItem("cart", JSON.stringify(updatedCart));
+        return updatedCart;
       }
-      setCart(updatedCart);
-      localStorage.setItem("cart", JSON.stringify(updatedCart));
-    }
+      return prevCart;
+    });
   };
+
   return (
     <CartContext.Provider
       value={{

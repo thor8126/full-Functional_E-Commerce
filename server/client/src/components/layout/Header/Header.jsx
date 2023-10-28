@@ -21,53 +21,30 @@ const navigation = {
       id: "men",
       name: "Shoes World",
       featured: [
-        //     {
-        //       name: "Sports Shoes",
-        //       href: "#",
-        //       imageSrc:
-        //         "https://tailwindui.com/img/ecommerce-images/product-page-04-detail-product-shot-01.jpg",
-        //       imageAlt:
-        //         "Drawstring top with elastic loop closure and textured interior padding.",
-        //     },
-        //     {
-        //       name: "Casual Shoes",
-        //       href: "#",
-        //       imageSrc:
-        //         "https://tailwindui.com/img/ecommerce-images/category-page-02-image-card-06.jpg",
-        //       imageAlt:
-        //         "Three shirts in gray, white, and blue arranged on table with same line drawing of hands and shapes overlapping on front of shirt.",
-        //     },
-        //     {
-        //       name: "Formal Shoes",
-        //       href: "#",
-        //       imageSrc:
-        //         "https://tailwindui.com/img/ecommerce-images/category-page-02-image-card-06.jpg",
-        //       imageAlt:
-        //         "Three shirts in gray, white, and blue arranged on table with same line drawing of hands and shapes overlapping on front of shirt.",
-        //     },
-        //     {
-        //       name: "Sandls & Flaters",
-        //       href: "#",
-        //       imageSrc:
-        //         "https://tailwindui.com/img/ecommerce-images/category-page-02-image-card-06.jpg",
-        //       imageAlt:
-        //         "Three shirts in gray, white, and blue arranged on table with same line drawing of hands and shapes overlapping on front of shirt.",
-        //     },
-        //     {
-        //       name: "Ethnic Shoes",
-        //       href: "#",
-        //       imageSrc:
-        //         "https://tailwindui.com/img/ecommerce-images/category-page-02-image-card-06.jpg",
-        //       imageAlt:
-        //         "Three shirts in gray, white, and blue arranged on table with same line drawing of hands and shapes overlapping on front of shirt.",
-        //     },
+        {
+          name: "Sports Shoes",
+          slug: "men's-sports-shoes",
+          imageSrc: "../../../HeaderImages/Sports.jpg",
+          imageAlt: "Top Brand Sports Shoes Images On Unspalsh",
+        },
+        {
+          name: "Casual Shoes",
+          slug: "men's-casual-shoes",
+          imageSrc: "../../../HeaderImages/Casual.jpg",
+          imageAlt: "Top Brand Sports Shoes Images On Unspalsh",
+        },
+
+        {
+          name: "Formal Shoes",
+          slug: "men's-formal-shoes",
+          imageSrc: "../../../HeaderImages/Formal.jpg",
+          imageAlt: "Top Brand Sports Shoes Images On Unspalsh",
+        },
         {
           name: "Mens Slippers & FlipFlop",
-          href: "#",
-          imageSrc:
-            "https://tailwindui.com/img/ecommerce-images/category-page-02-image-card-06.jpg",
-          imageAlt:
-            "Three shirts in gray, white, and blue arranged on table with same line drawing of hands and shapes overlapping on front of shirt.",
+          slug: "men's-slippers-and-flipflop",
+          imageSrc: "../../../HeaderImages/Slippers.jpg",
+          imageAlt: "Top Brand Sports Shoes Images On Unspalsh",
         },
       ],
       sections: [
@@ -87,7 +64,7 @@ const navigation = {
           ],
         },
         {
-          id: "FootWear Types",
+          id: "FootWear-Types",
           name: "FootWear Types",
           items: [
             { name: "Running Shoes", href: "#" },
@@ -131,20 +108,16 @@ const navigation = {
       ],
     },
   ],
-  pages: [
-    { name: "Company", href: "#" },
-    { name: "Stores", href: "#" },
-  ],
 };
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Header2() {
+export default function Header() {
   const [open, setOpen] = useState(false);
-  const { auth, setAuth } = useAuth();
-  const { cart, setCart } = useContext(CartContext);
+  const { auth } = useAuth();
+  const { cart } = useContext(CartContext);
   const { isOpen, setIsOpen } = useContext(SidebarContext);
   const [isSticky, setIsSticky] = useState(false);
 
@@ -214,7 +187,7 @@ export default function Header2() {
                     <Tab.List className="-mb-px flex space-x-8 px-4">
                       {navigation.categories.map((category) => (
                         <Tab
-                          key={category.name}
+                          key={category.id}
                           className={({ selected }) =>
                             classNames(
                               selected
@@ -230,26 +203,27 @@ export default function Header2() {
                     </Tab.List>
                   </div>
                   <Tab.Panels as={Fragment}>
-                    {navigation.categories.map((category) => (
+                    {navigation.categories.map((category, index) => (
                       <Tab.Panel
-                        key={category.name}
+                        key={index}
                         className="space-y-10 px-4 pb-8 pt-10"
+
                       >
                         <div className="grid grid-cols-2 gap-x-4">
                           {category.featured.map((item) => (
                             <div
-                              key={item.name}
+                              key={item.slug}
                               className="group relative text-sm"
                             >
                               <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
                                 <img
-                                  src={item.imageSrc}
+                                  src={item?.imageSrc}
                                   alt={item.imageAlt}
                                   className="object-cover object-center"
                                 />
                               </div>
-                              <a
-                                href={item.href}
+                              <Link
+                                to={`/category/${item.slug}`}
                                 className="mt-6 block font-medium text-gray-900"
                               >
                                 <span
@@ -257,39 +231,70 @@ export default function Header2() {
                                   aria-hidden="true"
                                 />
                                 {item.name}
-                              </a>
+                              </Link>
                               <p aria-hidden="true" className="mt-1">
                                 Shop now
                               </p>
                             </div>
                           ))}
                         </div>
-                        {category.sections.map((section) => (
-                          <div key={section.name}>
-                            <p
-                              id={`${category.id}-${section.id}-heading-mobile`}
-                              className="font-medium text-gray-900"
-                            >
-                              {section.name}
-                            </p>
-                            <ul
-                              role="list"
-                              aria-labelledby={`${category.id}-${section.id}-heading-mobile`}
-                              className="mt-6 flex flex-col space-y-6"
-                            >
-                              {section.items.map((item) => (
-                                <li key={item.name} className="flow-root">
-                                  <a
-                                    href={item.href}
-                                    className="-m-2 block p-2 text-gray-500"
-                                  >
-                                    {item.name}
-                                  </a>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        ))}
+                        {category.sections.map((section) =>
+                          section.id === "Categories" ? (
+                            <>
+                              <div key={section.id}>
+                                <p
+                                  id={`${category.id}-${section.id}-heading-mobile`}
+                                  className="font-medium text-gray-900"
+                                >
+                                  {section.name}
+                                </p>
+                                <ul
+                                  role="list"
+                                  aria-labelledby={`${category.id}-${section.id}-heading-mobile`}
+                                  className="mt-6 flex flex-col space-y-6"
+                                >
+                                  {section.items.map((item) => (
+                                    <li key={item.slug} className="flow-root">
+                                      <Link
+                                        to={`/category/${item.slug}`}
+                                        className="-m-2 block p-2 text-gray-500"
+                                      >
+                                        {item.name}
+                                      </Link>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <div key={section.id}>
+                                <p
+                                  id={`${category.id}-${section.id}-heading-mobile`}
+                                  className="font-medium text-gray-900"
+                                >
+                                  {section.name}
+                                </p>
+                                <ul
+                                  role="list"
+                                  aria-labelledby={`${category.id}-${section.id}-heading-mobile`}
+                                  className="mt-6 flex flex-col space-y-6"
+                                >
+                                  {section.items.map((item, index) => (
+                                    <li key={index} className="flow-root">
+                                      <a
+                                        href={item.href}
+                                        className="-m-2 block p-2 text-gray-500"
+                                      >
+                                        {item.name}
+                                      </a>
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            </>
+                          )
+                        )}
                       </Tab.Panel>
                     ))}
                   </Tab.Panels>
@@ -360,7 +365,7 @@ export default function Header2() {
               <Popover.Group className="hidden lg:ml-8 lg:block lg:self-stretch">
                 <div className="flex h-full space-x-8">
                   {navigation.categories.map((category) => (
-                    <Popover key={category.name} className="flex">
+                    <Popover key={category.id} className="flex">
                       {({ open }) => (
                         <>
                           <div className="relative flex">
@@ -395,11 +400,11 @@ export default function Header2() {
 
                               <div className="relative bg-white">
                                 <div className="mx-auto max-w-7xl px-8">
-                                  <div className="grid grid-cols-2 gap-x-8 gap-y-10 py-16">
-                                    <div className="col-start-2 grid grid-cols-3 gap-x-4">
+                                  <div className="grid grid-cols-2 gap-x-4 gap-y-10 py-16">
+                                    <div className="col-start-2 grid grid-cols-2 gap-x-4">
                                       {category.featured.map((item) => (
                                         <div
-                                          key={item.name}
+                                          key={item.slug}
                                           className="group relative text-base sm:text-sm"
                                         >
                                           <div className="aspect-h-1 aspect-w-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
@@ -409,8 +414,8 @@ export default function Header2() {
                                               className="object-cover object-center"
                                             />
                                           </div>
-                                          <a
-                                            href={item.href}
+                                          <Link
+                                            to={`/category/${item.slug}`}
                                             className="mt-6 block font-medium text-gray-900"
                                           >
                                             <span
@@ -418,7 +423,7 @@ export default function Header2() {
                                               aria-hidden="true"
                                             />
                                             {item.name}
-                                          </a>
+                                          </Link>
                                           <p
                                             aria-hidden="true"
                                             className="mt-1"
@@ -432,7 +437,7 @@ export default function Header2() {
                                       {category.sections.map((section) =>
                                         section.id === "Categories" ? (
                                           <>
-                                            <div key={section.name}>
+                                            <div key={section.id}>
                                               <p
                                                 id={`${section.name}-heading`}
                                                 className="font-medium text-gray-900"
@@ -446,7 +451,7 @@ export default function Header2() {
                                               >
                                                 {section.items.map((item) => (
                                                   <li
-                                                    key={item.name}
+                                                    key={item.slug}
                                                     className="flex"
                                                   >
                                                     <Link
@@ -474,19 +479,21 @@ export default function Header2() {
                                                 aria-labelledby={`${section.name}-heading`}
                                                 className="mt-6 space-y-6 sm:mt-4 sm:space-y-4"
                                               >
-                                                {section.items.map((item) => (
-                                                  <li
-                                                    key={item.name}
-                                                    className="flex"
-                                                  >
-                                                    <a
-                                                      href={item.href}
-                                                      className="hover:text-gray-800"
+                                                {section.items.map(
+                                                  (item, index) => (
+                                                    <li
+                                                      key={index}
+                                                      className="flex"
                                                     >
-                                                      {item.name}
-                                                    </a>
-                                                  </li>
-                                                ))}
+                                                      <a
+                                                        href={item.href}
+                                                        className="hover:text-gray-800"
+                                                      >
+                                                        {item.name}
+                                                      </a>
+                                                    </li>
+                                                  )
+                                                )}
                                               </ul>
                                             </div>
                                           </>

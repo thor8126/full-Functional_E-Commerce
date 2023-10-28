@@ -7,10 +7,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import DeletePrompt from "../../components/DeletePrompt";
 import { ShoeColor, ShoeSize, brands } from "../../components/material";
 import CreatableSelect from "react-select/creatable";
+import useCategory from "../../hooks/useCategory";
 
 const UpdateProduct = () => {
   const navigate = useNavigate();
-  const [categories, setCategories] = useState([]);
+  const categories = useCategory();
   const [category, setCategory] = useState([]);
   const [photo, setPhoto] = useState("");
   const [name, setName] = useState("");
@@ -90,25 +91,6 @@ const UpdateProduct = () => {
   };
   useEffect(() => {
     getSingleProuct();
-    // eslint-disable-next-line
-  }, []);
-  // get all categories
-  const getAllCategory = async () => {
-    try {
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_APP_API}/api/v1/category/get-category`
-      );
-      if (data?.success) {
-        setCategories(data?.category);
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("Something went wrong in getting category");
-    }
-  };
-
-  useEffect(() => {
-    getAllCategory();
     // eslint-disable-next-line
   }, []);
 

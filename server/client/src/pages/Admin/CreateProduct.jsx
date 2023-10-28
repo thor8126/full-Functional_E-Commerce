@@ -6,10 +6,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ShoeColor, ShoeSize, brands } from "../../components/material";
 import CreatableSelect from "react-select/creatable";
+import useCategory from "../../hooks/useCategory";
 
 const CreateProduct = () => {
   const navigate = useNavigate();
-  const [categories, setCategories] = useState([]);
+  const categories = useCategory();
   const [category, setCategory] = useState(null);
   const [photo, setPhoto] = useState("");
   const [name, setName] = useState("");
@@ -40,32 +41,14 @@ const CreateProduct = () => {
   }));
   const brandOptions = brands.map((b, index) => ({
     label: b,
-    value: b,
+    val: b,
     id: index,
   }));
 
   const options = [
-    { value: "yes", label: "Yes" },
-    { value: "no", label: "No" },
+    { val: "yes", label: "Yes" },
+    { val: "no", label: "No" },
   ];
-
-  const getAllCategory = async () => {
-    try {
-      const { data } = await axios.get(
-        `${import.meta.env.VITE_APP_API}/api/v1/category/get-category`
-      );
-      if (data?.success) {
-        setCategories(data?.category);
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("Something went wrong in getting category");
-    }
-  };
-
-  useEffect(() => {
-    getAllCategory();
-  }, []);
 
   const handleCreate = async (e) => {
     e.preventDefault();
@@ -111,7 +94,7 @@ const CreateProduct = () => {
             <AdminMenu />
           </div>
           <div className="lg:w-3/4">
-            <h1 className="text-2xl">Create Product</h1>
+            <h1 className="text-center text-2xl">Create Product</h1>
             <div className="w-full lg:w-3/4 mx-auto">
               <CreatableSelect
                 isClearable
@@ -126,7 +109,6 @@ const CreateProduct = () => {
                 isMulti
                 className="mb-3"
                 options={colorOptions}
-                value={colors}
                 onChange={(selectedOptions) => {
                   const selectedColors = selectedOptions.map(
                     (option) => option.value
@@ -139,7 +121,6 @@ const CreateProduct = () => {
                 isMulti
                 className="mb-3"
                 options={sizeOptions}
-                value={sizes}
                 onChange={(selectedOptions) => {
                   const selectedSizes = selectedOptions.map(
                     (option) => option.value
@@ -152,9 +133,8 @@ const CreateProduct = () => {
                 isClearable
                 options={brandOptions}
                 className="mb-3"
-                value={brand}
                 onChange={(newValue) => {
-                  setBrand(newValue);
+                  setBrand(newValue.val);
                 }}
                 placeholder="Please Select a Brand"
               />
@@ -182,18 +162,16 @@ const CreateProduct = () => {
               <CreatableSelect
                 options={options}
                 placeholder="Shipped"
-                value={shipping}
                 onChange={(value) => {
-                  setShipping(value.value);
+                  setShipping(value.val);
                 }}
                 className="mb-3"
               />
               <CreatableSelect
                 options={options}
                 placeholder="isAvailable"
-                value={isAvailable}
                 onChange={(value) => {
-                  setIsAvailable(value.value);
+                  setIsAvailable(value.val);
                 }}
                 className="mb-3"
               />
