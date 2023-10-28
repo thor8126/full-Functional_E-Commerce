@@ -8,12 +8,13 @@ import {
 import SearchInput from "../../forms/SearchInput";
 import { useAuth } from "../../../context/Auth";
 import { Link } from "react-router-dom";
-import { Badge } from "antd";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import DropDownToCheckUserOrAdmin from "../../Tailwind components/DropDownToCheckUserOrAdmin";
 import { SidebarContext } from "../../../context/SidebarProvider";
 import { CartContext } from "../../../context/Cart";
+import Badge from '@mui/material/Badge';
+
 
 const navigation = {
   categories: [
@@ -553,7 +554,7 @@ export default function Header() {
                   className="ml-4 flow-root lg:ml-6"
                   onClick={() => setIsOpen(!isOpen)}
                 >
-                  <Badge count={cart?.length} showZero>
+                  <Badge badgeContent={cart?.length} color="error" size="large" >
                     {cart?.length === 0 ? (
                       <ShoppingCartOutlinedIcon />
                     ) : (

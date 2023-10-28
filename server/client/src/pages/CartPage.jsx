@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import Layout from "../components/layout/Layout";
 import { CartContext } from "../context/Cart";
 import { Link, useNavigate } from "react-router-dom";
-import DeleteIcon from "@mui/icons-material/Delete";
 import toast from "react-hot-toast";
 import DropIn from "braintree-web-drop-in-react";
 import axios from "axios";
@@ -50,7 +49,9 @@ const CartPage = () => {
       );
       setLoading(false);
       localStorage.removeItem("cart");
-      auth?.user?.role === 1 ? (navigate(`/dashboard/admin/orders`)) : (navigate(`/dashboard/user/orders`));
+      auth?.user?.role === 1
+        ? navigate(`/dashboard/admin/orders`)
+        : navigate(`/dashboard/user/orders`);
       toast.success("Payment completed successfully");
     } catch (error) {
       console.log(error);
@@ -89,7 +90,6 @@ const CartPage = () => {
                   </p>
                 </div>
                 {cart?.map((p, index) => (
-               
                   <div
                     className="justify-between mb-2 rounded-lg bg-white p-2 shadow-md sm:flex sm:justify-start"
                     key={index}

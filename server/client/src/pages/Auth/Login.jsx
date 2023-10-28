@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import Layout from "../../components/layout/Layout";
-import axios, { all } from "axios";
+import axios from "axios";
 import toast from "react-hot-toast";
 import { CartContext } from "../../context/Cart";
 import { useAuth } from "../../context/Auth";
@@ -68,7 +68,6 @@ const Login2 = () => {
           password,
         }
       );
-      console.log(res);
       if (res?.data?.success) {
         toast.success(res?.data?.message);
         setAuth({
@@ -140,6 +139,7 @@ const Login2 = () => {
                     required
                   />
                   <button
+                  type="button"
                     className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500"
                     onClick={togglePasswordVisibility}
                   >

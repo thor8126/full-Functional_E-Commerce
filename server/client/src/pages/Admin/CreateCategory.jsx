@@ -4,12 +4,18 @@ import AdminMenu from "../../components/layout/AdminMenu/AdminMenu";
 import toast from "react-hot-toast";
 import axios from "axios";
 import CategoryForm from "../../components/forms/CategoryForm";
-import { Modal } from "antd";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+} from "@mui/material";
 
 function CreateCategory() {
   const [categories, setCategories] = useState([]);
   const [name, setName] = useState("");
-  const [visible, setVisible] = useState(false);
+  const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState(false);
   const [updatedName, setUpdatedName] = useState("");
 
@@ -67,7 +73,7 @@ function CreateCategory() {
         toast.success(data?.message);
         setSelected("");
         setUpdatedName("");
-        setVisible(false);
+        setOpen(false); // Close the Material-UI Dialog
         getAllCategory();
       } else {
         toast.error(data?.message);
@@ -128,9 +134,9 @@ function CreateCategory() {
                         <button
                           className="bg-blue-500 hover:bg-blue-700 text-white py-1 px-3 rounded-md mr-2"
                           onClick={() => {
-                            setVisible(true);
                             setUpdatedName(c.name);
                             setSelected(c);
+                            setOpen(true); // Open the Material-UI Dialog
                           }}
                         >
                           Edit
@@ -152,13 +158,20 @@ function CreateCategory() {
           </div>
         </div>
       </div>
-      <Modal onCancel={() => setVisible(false)} footer={null}>
-        <CategoryForm
-          value={updatedName}
-          setValue={setUpdatedName}
-          handleSubmit={handleUpdate}
-        />
-      </Modal>
+
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <DialogTitle>Edit Category</DialogTitle>
+        <DialogContent>
+          <CategoryForm
+            value={updatedName}
+            setValue={setUpdatedName}
+            handleSubmit={handleUpdate}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpen(false)}>Cancel</Button>
+        </DialogActions>
+      </Dialog>
     </Layout>
   );
 }

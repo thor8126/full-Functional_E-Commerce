@@ -1,8 +1,7 @@
 import React from "react";
 import Layout from "../components/layout/Layout";
 import { useSearch } from "../context/Search";
-import { Link, useNavigate } from "react-router-dom";
-import { AiOutlineArrowLeft } from "react-icons/ai";
+import { useNavigate } from "react-router-dom";
 const Search = () => {
   const { values } = useSearch();
   const navigate = useNavigate();

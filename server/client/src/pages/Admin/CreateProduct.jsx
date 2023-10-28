@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Layout from "../../components/layout/Layout";
 import AdminMenu from "../../components/layout/AdminMenu/AdminMenu";
 import toast from "react-hot-toast";
