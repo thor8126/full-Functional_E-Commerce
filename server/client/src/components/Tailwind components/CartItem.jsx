@@ -34,7 +34,7 @@ const CartItem = ({ p }) => {
             </Link>
             {/* remove icon */}
             <div
-              onClick={() => removeFromCart(p._id)}
+              onClick={() => removeCartItem(p._id)}
               className="text-xl cursor-pointer"
             >
               <IoMdClose className="text-gray-500 hover:text-red-500 transition" />

@@ -207,7 +207,6 @@ export default function Header() {
                       <Tab.Panel
                         key={index}
                         className="space-y-10 px-4 pb-8 pt-10"
-
                       >
                         <div className="grid grid-cols-2 gap-x-4">
                           {category.featured.map((item) => (
@@ -357,7 +356,7 @@ export default function Header() {
               <div className="ml-4 flex lg:ml-0">
                 <Link to="/">
                   <span className="sr-only">Shoe-Dream</span>
-                  <img src="../logo/2_generated.png" className="h-12 w-auto" />
+                  <img src="../logo/2_generated2.png" className="h-9 w-auto" />
                 </Link>
               </div>
 

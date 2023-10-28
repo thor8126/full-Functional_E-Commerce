@@ -16,7 +16,6 @@ const AdminOrders = () => {
     "Delivered",
     "Cancelled",
   ]);
-  const [changeStatus, setChangeStatus] = useState("");
   const { auth } = useAuth();
 
   const getOrders = async () => {
