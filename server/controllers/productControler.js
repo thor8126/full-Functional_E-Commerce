@@ -31,7 +31,6 @@ export const createProductController = async (req, res, next) => {
       size,
       isAvailable,
     } = req.fields;
-    console.log(brand);
 
     const { photo } = req.files;
     let keys = [
@@ -298,7 +297,6 @@ export const productFiltersController = async (req, res) => {
       filter.size = { $in: sizeRegex };
     }
 
-    console.log("Filter criteria ", filter);
     // Query the database with the constructed filter
     const products = await productModel
       .find(filter)
