@@ -7,7 +7,7 @@ import productRoutes from "./routes/productRoutes.js";
 import cartRoutes from "./routes/cartRoutes.js";
 import bodyParser from "body-parser";
 import cors from "cors";
-import path from "path"
+import path from "path";
 // configure .env file
 config({
   path: "./.env",
@@ -21,9 +21,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, "./client/dist")));
 
 // routes
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/category", categoryRoutes);
 app.use("/api/v1/product", productRoutes);
 app.use("/api/v1/cart", cartRoutes);
+
+// rest api
+app.use("*", function (req, res) {
+  res.send(path.join(__dirname, "./client/dist/index.html"));
+});
