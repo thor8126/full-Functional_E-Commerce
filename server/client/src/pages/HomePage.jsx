@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../components/layout/Layout";
 import axios from "axios";
-// import { Checkbox } from "antd";
+
 import toast from "react-hot-toast";
 import { Box } from "@mui/material";
 import { Slider } from "@mui/material";
