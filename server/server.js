@@ -1,6 +1,6 @@
 import { app } from "./app.js";
 import { connectDB } from "./config/db.js";
-const port = process.env.PORT;
+const port = process.env.PORT || 8000;
 
 // here i am starting the server
 connectDB()
