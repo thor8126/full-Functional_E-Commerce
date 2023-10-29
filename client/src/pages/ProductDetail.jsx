@@ -69,7 +69,7 @@ const ProductDetail = () => {
               <div className="aspect-h-5 aspect-w-4 lg:aspect-h-4 lg:aspect-w-3 sm:overflow-hidden sm:rounded-lg">
                 {product && (
                   <img
-                    className="h-full w-full object-cover object-center"
+                    className="h-full w-full object-contain object-center"
                     src={`${
                       import.meta.env.VITE_APP_API
                     }/api/v1/product/product-photo/${product?._id}`}

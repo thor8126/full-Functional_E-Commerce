@@ -8,13 +8,13 @@ import CartProvider from "./context/Cart.jsx";
 import SidebarProvider from "./context/SidebarProvider.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <AuthProvider>
-    <SearchProvider>
-      <SidebarProvider>
-        <CartProvider>
+  <CartProvider>
+    <AuthProvider>
+      <SearchProvider>
+        <SidebarProvider>
           <App />
-        </CartProvider>
-      </SidebarProvider>
-    </SearchProvider>
-  </AuthProvider>
+        </SidebarProvider>
+      </SearchProvider>
+    </AuthProvider>
+  </CartProvider>
 );

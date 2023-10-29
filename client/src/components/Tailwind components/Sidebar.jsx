@@ -7,11 +7,11 @@ import { FiTrash2 } from "react-icons/fi";
 import CartItem from "./CartItem";
 import { SidebarContext } from "../../context/SidebarProvider";
 import { CartContext } from "../../context/Cart";
+import { useEffect } from "react";
 
 const Sidebar = () => {
   const { isOpen, handleClose } = useContext(SidebarContext);
   const { cart, clearCart, total, itemQuantity } = useContext(CartContext);
-
   return (
     <div
       className={`${
@@ -29,7 +29,7 @@ const Sidebar = () => {
           <IoMdArrowForward className="text-2xl" />
         </div>
       </div>
-      <div className="flex flex-col gap-y-2 h-[360px] md:h-[480px] lg:h-[420px] overflow-y-auto overflow-x-hidden border-b">
+      <div className="flex flex-col gap-y-2 h-[360px] md:h-[480px] lg:h-[380px] overflow-y-auto overflow-x-hidden border-b">
         {cart.map((p) => {
           return <CartItem p={p} key={p._id} />;
         })}
@@ -46,7 +46,7 @@ const Sidebar = () => {
               {/* clear cart icon */}
               <div
                 onClick={clearCart}
-                className="cursor-pointer py-4 bg-red-500 text-white w-12 h-12 flex justify-center items-center text-xl"
+                className="cursor-pointer py-2 bg-red-500 text-white w-12 h-12 flex justify-center items-center text-xl"
               >
                 <FiTrash2 />
               </div>
@@ -54,21 +54,14 @@ const Sidebar = () => {
             <button onClick={handleClose}>
               <Link
                 to="/"
-                className="bg-gray-200 flex p-3 justify-center items-center text-primary w-full font-medium"
+                className="bg-gray-200 flex p-2 justify-center items-center text-primary w-full font-medium"
               >
                 Back To Shop
               </Link>
             </button>
             <Link
               to={"/cart"}
-              className="bg-gray-200 flex p-3 justify-center items-center text-primary w-full font-medium"
-            >
-              View cart
-            </Link>
-
-            <Link
-              to={"/cart"}
-              className="bg-primary flex p-3 justify-center items-center text-white w-full font-medium"
+              className="bg-primary flex p-2 justify-center items-center text-white w-full font-medium"
             >
               Checkout
             </Link>

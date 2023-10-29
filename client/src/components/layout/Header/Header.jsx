@@ -354,7 +354,7 @@ export default function Header() {
               </button>
 
               {/* Logo */}
-              <div className="ml-4 flex lg:ml-0">
+              <div className="ml-2 flex lg:ml-0">
                 <Link to="/">
                   <span className="sr-only">Shoe-Dream</span>
                   <img src="../logo/2_generated2.png" className="h-9 w-auto" />

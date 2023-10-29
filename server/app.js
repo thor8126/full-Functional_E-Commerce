@@ -21,7 +21,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, "./client/dist")));
 
 // routes
 app.use("/api/v1/auth", authRoutes);
@@ -30,6 +29,6 @@ app.use("/api/v1/product", productRoutes);
 app.use("/api/v1/cart", cartRoutes);
 
 // rest api
-app.use("*", function (req, res) {
-  res.send(path.join(__dirname, "./client/dist/index.html"));
+app.use("*", function (req, res, next) {
+  res.send("Welcome in Shoe world");
 });

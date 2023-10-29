@@ -4,10 +4,10 @@ import { Link } from "react-router-dom";
 import { BsPlus, BsEyeFill } from "react-icons/bs";
 
 import { CartContext } from "../../context/Cart";
+import { useEffect } from "react";
 
 const ProductCard = ({ p, Admin = false }) => {
   const { addToCart } = useContext(CartContext);
-
   let size = p.size;
   if (size) {
     size = size.replace(/"/g, "");
