@@ -139,7 +139,7 @@ const CartPage = () => {
                             strokeWidth="1.5"
                             stroke="currentColor"
                             className="h-5 w-5 cursor-pointer duration-150 hover:text-red-500"
-                            onClick={() => removeCartItem(p.id)}
+                            onClick={() => removeCartItem(p._id)}
                           >
                             <path
                               strokeLinecap="round"
