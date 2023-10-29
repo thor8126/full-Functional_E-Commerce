@@ -4,10 +4,9 @@ import categortModel from "../models/categortModel.js";
 import fs from "fs";
 import OrderModel from "../models/orderModel.js";
 import braintree from "braintree";
-import "dotenv/config";
-// import dotenv from "dotenv";
+import dotenv from "dotenv";
 
-// dotenv.config();
+dotenv.config();
 
 // payment gateay
 const gateway = new braintree.BraintreeGateway({
