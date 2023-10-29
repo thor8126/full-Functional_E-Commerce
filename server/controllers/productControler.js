@@ -6,7 +6,7 @@ import OrderModel from "../models/orderModel.js";
 import braintree from "braintree";
 import dotenv from "dotenv";
 
-dotenv.config();
+dotenv.config({ path: "./.env" });
 
 // payment gateay
 const gateway = new braintree.BraintreeGateway({
