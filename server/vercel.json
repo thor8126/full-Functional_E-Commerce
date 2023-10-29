@@ -1,6 +1,4 @@
 {
-  "version": 2,
-  "name": "Mern-Stack-Shoes-Website",
   "builds": [{ "src": "app.js", "use": "@vercel/node" }],
-  "routes": [{ "src": "/(.*)", "dest": "/app.js" }]
+  "routes": [{ "src": "/(.*)", "dest": "/server.js" }]
 }
