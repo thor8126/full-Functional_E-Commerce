@@ -4,16 +4,17 @@ import categortModel from "../models/categortModel.js";
 import fs from "fs";
 import OrderModel from "../models/orderModel.js";
 import braintree from "braintree";
-import dotenv from "dotenv";
+import "dotenv/config";
+// import dotenv from "dotenv";
 
-dotenv.config();
+// dotenv.config();
 
 // payment gateay
 const gateway = new braintree.BraintreeGateway({
   environment: braintree.Environment.Sandbox,
-  merchantId: "kr8tbzv2dbzgfxf2",
-  publicKey: "5xgkcsq2s3z65pfc",
-  privateKey: "e8e5b4cabd82e782b3f00a49f20da05e",
+  merchantId: process.env.BRAINTREE_MERCHANT_ID,
+  publicKey: process.env.BRAINTREE_PUBLIC_KEY,
+  privateKey: process.env.BRAINTREE_PRIVATE_KEY,
 });
 
 // creating a new Product
