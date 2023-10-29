@@ -5,7 +5,6 @@ import fs from "fs";
 import OrderModel from "../models/OrderModel.js";
 import braintree from "braintree";
 import dotenv from "dotenv";
-import { log } from "console";
 
 dotenv.config();
 
