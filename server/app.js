@@ -1,5 +1,4 @@
 import express from "express";
-import { config } from "dotenv";
 import morgan from "morgan";
 import authRoutes from "./routes/authRoute.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
@@ -7,10 +6,7 @@ import productRoutes from "./routes/productRoutes.js";
 import cartRoutes from "./routes/cartRoutes.js";
 import bodyParser from "body-parser";
 import cors from "cors";
-// configure .env file
-config({
-  path: "./.env",
-});
+
 // i am exporting app so that i can start server in server.js
 export const app = express();
 
@@ -24,9 +20,9 @@ app.use(bodyParser.json());
 
 
 // rest api
-app.use("*", function (req, res, next) {
-  res.send("Welcome in Shoe world");
-});
+// app.use("*", function (req, res, next) {
+//   res.send("Welcome in Shoe world");
+// });
 
 app.get("/shoes", (req, res) => {
   res.send("welcome to shoe world")
