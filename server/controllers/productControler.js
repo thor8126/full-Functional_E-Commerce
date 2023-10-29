@@ -2,7 +2,7 @@ import slugify from "slugify";
 import productModel from "../models/productModel.js";
 import categortModel from "../models/categortModel.js";
 import fs from "fs";
-import OrderModel from "../models/OrderModel.js";
+import OrderModel from "../models/orderModel.js";
 import braintree from "braintree";
 import dotenv from "dotenv";
 

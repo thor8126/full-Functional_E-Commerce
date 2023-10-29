@@ -7,7 +7,6 @@ import productRoutes from "./routes/productRoutes.js";
 import cartRoutes from "./routes/cartRoutes.js";
 import bodyParser from "body-parser";
 import cors from "cors";
-import path from "path";
 // configure .env file
 config({
   path: "./.env",
@@ -22,18 +21,16 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 
-// for set producta 
-if (process.env.NODE_ENV === "production") {
-  app.use("/", express.static("../client/dist"));
-  app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "../client/dist/index.html"));
-  });
-}
+
 
 // rest api
 app.use("*", function (req, res, next) {
   res.send("Welcome in Shoe world");
 });
+
+app.get("/shoes", (req, res) => {
+  res.send("welcome to shoe world")
+})
 
 // routes
 app.use("/api/v1/auth", authRoutes);
