@@ -22,13 +22,15 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev"));
 app.use(bodyParser.json());
 
+// rest api
+app.use("*", function (req, res, next) {
+  res.send("Welcome in Shoe world");
+});
+
 // routes
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/category", categoryRoutes);
 app.use("/api/v1/product", productRoutes);
 app.use("/api/v1/cart", cartRoutes);
 
-// rest api
-app.use("*", function (req, res, next) {
-  res.send("Welcome in Shoe world");
-});
+
